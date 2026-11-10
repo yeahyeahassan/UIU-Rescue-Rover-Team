@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <link rel="icon" href="images/umrt_logo.png" type="image/x-icon">
+    <title>Team Members - URRT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Barlow+Condensed:wght@300;400;500;600;700;800;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <style>
+        /* =============================================
+           INDUSTRIAL EMERGENCY COMMAND THEME
+        ============================================= */
+        :root {
+            --bg-deep:    #0d0d0d;
+            --bg-mid:     #141414;
+            --bg-panel:   #1a1a1a;
+            --bg-card:    #1f1f1f;
+            --steel:      #2a2a2a;
+            --steel-light:#3a3a3a;
+            --amber:      #ff0400;
+            --amber-hot:  #ff6200;
+            --amber-dim:  #b45309;
+            --white:      #ffffff;
+            --muted:      #ffffff;
+            --accent-gold:#ffbf00;
+
+            /* Team colour tokens */
+            --clr-electrical: #ffbf00;
+            --clr-software:   #ff0400;
+            --clr-mechanical: #7dd3fc;
+            --clr-autonomous: #86efac;
+            --clr-media:      #b9ea24;
+            --clr-logistics:  #b4b4b6;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+        html { overflow-x: hidden; scroll-behavior: smooth; }
+        body {
+            font-family: 'Barlow', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--white);
+            overflow-x: hidden;
+            width: 100%;
+            max-width: 100vw;
+        }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.04em; }
+
+        .gradient-text {
+            background: linear-gradient(90deg, var(--amber), var(--amber-hot));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .hazard {
+            background: repeating-linear-gradient(-55deg, var(--amber) 0px, var(--amber) 10px, var(--bg-deep) 10px, var(--bg-deep) 22px);
+        }
+        .mono      { font-family: 'Space Mono', monospace; }
+        .condensed { font-family: 'Barlow Condensed', sans-serif; }
+
+        .panel { background: var(--bg-panel); border: 1px solid var(--steel-light); position: relative; }
+        .panel::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, var(--amber), transparent);
+        }
+
+        body::after {
+            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: repeating-linear-gradient(0deg, transparent 0px, transparent 3px, rgba(0,0,0,0.08) 3px, rgba(0,0,0,0.08) 4px);
+            pointer-events: none; z-index: 9998;
+        }
+        .noise-bg {
+            position: fixed; top:0; left:0; width:100%; height:100%;
+            z-index: 0; pointer-events: none; opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+        .grid-bg {
+            background-image:
+                linear-gradient(rgba(255,4,0,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,4,0,0.04) 1px, transparent 1px);
+            background-size: 48px 48px;
+        }
+
+        @keyframes blip { 0%,100%{box-shadow:0 0 0 0 rgba(255,4,0,0.7)} 50%{box-shadow:0 0 0 10px rgba(255,4,0,0)} }
+        @keyframes ambientFlow { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+        .blip { animation: blip 2s infinite; }
+
+        .section-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+            color: var(--amber);
+            display: flex; align-items: center; gap: 0.75rem;
+        }
+        .section-label::before { content: ''; display: block; width: 24px; height: 1px; background: currentColor; }
+        .section-label.gold { color: var(--accent-gold); }
+
+        /* ---- NAV ---- */
+        nav.site-nav {
+            background: rgba(13,13,13,0.96);
+            border-bottom: 1px solid var(--steel-light);
+            backdrop-filter: blur(12px);
+            position: relative;
+        }
+        nav.site-nav::after {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 1px;
+            background: linear-gradient(90deg, transparent, var(--amber) 30%, var(--amber) 70%, transparent);
+            opacity: 0.4;
+        }
+        .nav-link {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 0.85rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+            color: var(--muted); transition: color 0.2s; position: relative; text-decoration: none;
+        }
+        .nav-link::after {
+            content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 1px;
+            background: var(--amber); transition: width 0.3s ease;
+        }
+        .nav-link:hover { color: var(--amber); }
+        .nav-link:hover::after { width: 100%; }
+
+        /* ---- TEAM YEAR NAV ---- */
+        .team-year-nav { background: rgba(13,13,13,0.95); border-bottom: 1px solid var(--steel-light); width: 100%; }
+        .team-year-nav ul {
+            display: flex; justify-content: center; padding: 0.75rem; gap: 0.5rem; flex-wrap: wrap; margin: 0; list-style: none;
+        }
+        .team-year-nav a {
+            font-family: 'Barlow Condensed', sans-serif; font-weight: 700; letter-spacing: 0.12em;
+            text-transform: uppercase; font-size: 0.85rem; color: rgba(255,255,255,0.5);
+            padding: 0.4rem 1rem; border: 1px solid var(--steel-light); transition: all 0.2s; text-decoration: none;
+            clip-path: polygon(6px 0%,100% 0%,100% calc(100% - 6px),calc(100% - 6px) 100%,0% 100%,0% 6px);
+        }
+        .team-year-nav a:hover { border-color: rgba(255,4,0,0.5); color: var(--amber); }
+        .team-year-nav a.active { background: var(--amber); border-color: var(--amber); color: var(--bg-deep); }
+
+        /* ---- TITLE PAGE ---- */
+        .title-page {
+            padding: 4rem 1rem 3rem; text-align: center; position: relative; overflow: hidden;
+            background-color: var(--bg-mid);
+        }
+        .title-page::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: repeating-linear-gradient(-55deg, var(--amber) 0px, var(--amber) 10px, transparent 10px, transparent 22px);
+            opacity: 0.6;
+        }
+        .title-page::after {
+            content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, var(--amber) 30%, var(--amber) 70%, transparent);
+            opacity: 0.3;
+        }
+
+        /* =============================================
+           FILTER BAR
+        ============================================= */
+        .team-filter-bar {
+            display: flex; justify-content: center; align-items: center; gap: 0.5rem; flex-wrap: wrap;
+            padding: 0 1rem;
+        }
+        .filter-btn {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 0.8rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+            padding: 0.4rem 1rem;
+            border: 1px solid rgba(255,255,255,0.14);
+            background: transparent; color: rgba(255,255,255,0.55);
+            cursor: pointer; transition: all 0.22s ease; user-select: none;
+            clip-path: polygon(5px 0%,100% 0%,100% calc(100% - 5px),calc(100% - 5px) 100%,0% 100%,0% 5px);
+            display: inline-flex; align-items: center; min-height: 36px;
+            --fc: #c9c9c9;
+        }
+        .filter-btn[data-filter="electrical"] { --fc: var(--clr-electrical); }
+        .filter-btn[data-filter="software"]   { --fc: var(--clr-software); }
+        .filter-btn[data-filter="mechanical"] { --fc: var(--clr-mechanical); }
+        .filter-btn[data-filter="media"]      { --fc: var(--clr-media); }
+        .filter-btn[data-filter="logistics"]  { --fc: var(--clr-logistics); }
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--fc); border-color: var(--fc); color: #000;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+        }
+        .filter-btn:focus-visible { outline: 2px solid var(--accent-gold); outline-offset: 2px; }
+        .filter-dot { display: inline-block; width: 7px; height: 7px; margin-right: 7px; background: var(--fc); }
+        .filter-btn:hover .filter-dot, .filter-btn.active .filter-dot { background: #000; }
+
+        /* =============================================
+           ROSTER LAYOUT
+        ============================================= */
+        .team-members { padding: 3rem 1.5rem 4.5rem; max-width: 1180px; margin: 0 auto; width: 100%; }
+
+        .roster-block { margin-bottom: 4rem; }
+        .roster-block:last-child { margin-bottom: 0; }
+        .roster-block.section-empty { display: none; }
+
+        .block-head { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; }
+        .block-head::before, .block-head::after {
+            content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--steel-light));
+        }
+        .block-head::after { background: linear-gradient(90deg, var(--steel-light), transparent); }
+        .block-head h3 { font-size: 1.7rem; color: #fff; line-height: 1; white-space: nowrap; }
+
+        /* ---- Team colour on each card ---- */
+        .member-card, .leader-feature { --tc: var(--steel-light); }
+        [data-team="electrical"] { --tc: var(--clr-electrical); }
+        [data-team="software"]   { --tc: var(--clr-software); }
+        [data-team="mechanical"] { --tc: var(--clr-mechanical); }
+        [data-team="autonomous"] { --tc: var(--clr-autonomous); }
+        [data-team="media"]      { --tc: var(--clr-media); }
+        [data-team="logistics"]  { --tc: var(--clr-logistics); }
+
+        /* ---- Sub-leads (centred wrap) and members grids ---- */
+        .subleads-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.25rem; max-width: 960px; margin: 0 auto; }
+        .subleads-grid .member-card { flex: 0 1 100%; }
+        @media (min-width: 560px)  { .subleads-grid .member-card { flex-basis: calc((100% - 1.25rem) / 2); } }
+        @media (min-width: 760px)  { .subleads-grid .member-card { flex-basis: calc((100% - 2.5rem) / 3); } }
+        /* Wide screens: all 5 sub-leads in ONE row, cards keep the same ~306px size */
+        @media (min-width: 1640px) {
+            .subleads-grid {
+                flex-wrap: nowrap; max-width: none;
+                width: min(1620px, calc(100vw - 3rem));
+                margin-left: 50%; transform: translateX(-50%);
+            }
+            .subleads-grid .member-card { flex: 0 1 306px; }
+        }
+
+        .members-grid { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
+        @media (min-width: 480px)  { .members-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (min-width: 800px)  { .members-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (min-width: 1000px) { .members-grid { grid-template-columns: repeat(4, 1fr); } }
+
+        /* ---- Member card ---- */
+        .member-card {
+            position: relative; background: var(--bg-card);
+            border: 1px solid var(--steel-light);
+            overflow: hidden; display: flex; flex-direction: column;
+            transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.3s ease;
+            clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px));
+        }
+        .member-card.hidden-card { display: none; }
+        .member-card::before {   /* team colour bar */
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; z-index: 3;
+            background: linear-gradient(90deg, var(--tc), transparent);
+            opacity: 0.55; transition: opacity 0.3s ease;
+        }
+        .member-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--tc);
+            box-shadow: 0 20px 44px rgba(0,0,0,0.6), 0 0 28px color-mix(in srgb, var(--tc) 22%, transparent);
+        }
+        .member-card:hover::before { opacity: 1; }
+
+        /* Photo — large 4:5 portrait */
+        .member-photo-wrap { position: relative; width: 100%; padding-top: 115%; overflow: hidden; background: var(--steel); }
+        .member-photo-wrap::after {
+            content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+            background: linear-gradient(to top, rgba(13,13,13,0.95) 0%, rgba(13,13,13,0.55) 28%, transparent 55%);
+        }
+        .member-photo {
+            position: absolute; inset: 0; width: 100%; height: 100%; max-width: none;
+            object-fit: cover; object-position: center top;
+            transition: transform 0.6s ease, filter 0.4s ease;
+            filter: grayscale(15%) contrast(1.05);
+        }
+        .member-card:hover .member-photo { transform: scale(1.06); filter: grayscale(0%) contrast(1.1); }
+
+        /* Name sits on the photo */
+        .member-name-plate { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; padding: 0.85rem 1rem 0.75rem; }
+        .member-name-plate h3 {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 1.2rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase;
+            line-height: 1.1; margin: 0; color: #fff; word-break: break-word;
+        }
+
+        /* ID tag — top left */
+        .member-id-badge {
+            position: absolute; top: 0.75rem; left: 0.75rem; z-index: 3;
+            display: flex; align-items: center; gap: 0.4rem;
+            padding: 0.25rem 0.55rem;
+            background: rgba(13,13,13,0.8); backdrop-filter: blur(4px);
+            border: 1px solid var(--steel-light);
+            font-family: 'Space Mono', monospace; font-size: 0.6rem; letter-spacing: 0.15em;
+            color: rgba(255,255,255,0.7); text-transform: uppercase;
+        }
+        .member-id-dot { width: 6px; height: 6px; background: var(--tc); flex-shrink: 0; animation: blip 2s infinite; }
+
+        /* Rank ribbons — top right */
+        .leader-badge, .lead-badge {
+            position: absolute; top: 0; right: 0; z-index: 3;
+            font-family: 'Space Mono', monospace; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em;
+            text-transform: uppercase; padding: 0.4rem 0.75rem;
+            display: flex; align-items: center; gap: 0.35rem;
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+        }
+        .leader-badge { background: var(--accent-gold); color: var(--bg-deep); }
+        .lead-badge {
+            background: rgba(13,13,13,0.88); color: var(--accent-gold);
+            border: 1px solid var(--accent-gold); border-top: none; border-right: none;
+        }
+
+        /* Info boxes under the photo: Role / Sub-Team / Department */
+        .member-info { margin-top: auto; }
+        .member-info .info-grid {
+            grid-template-columns: 0.8fr 1.3fr 1fr;
+            border: 0; border-top: 1px solid var(--steel-light);
+        }
+        .member-info .info-cell { padding: 0.6rem 0.7rem; }
+        .member-info .info-cell small {
+            font-size: 0.52rem; letter-spacing: 0.1em; margin-bottom: 0.2rem; color: var(--tc);
+        }
+        .member-info .info-cell span { font-size: 0.95rem; line-height: 1.15; display: block; }
+
+        /* Sub-lead cards get a steadier accent */
+        .member-card-sublead::before { opacity: 1; }
+        .member-card-sublead .member-name-plate h3 { font-size: 1.3rem; }
+
+        /* ---- FEATURED LEADER ---- */
+        .leader-feature {
+            display: grid; grid-template-columns: 1fr;
+            max-width: 840px; margin: 0 auto;
+            background: var(--bg-card);
+            border: 1px solid rgba(255,191,0,0.45);
+            box-shadow: 0 0 0 1px rgba(255,191,0,0.15), 0 20px 50px rgba(255,191,0,0.12);
+            position: relative; overflow: hidden;
+        }
+        .leader-feature.hidden-card { display: none; }
+        @media (min-width: 800px) { .leader-feature { grid-template-columns: 5fr 6fr; } }
+        .leader-feature::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; z-index: 3;
+            background: linear-gradient(90deg, var(--accent-gold), var(--amber-hot), var(--accent-gold));
+            background-size: 200% 100%; animation: ambientFlow 3s ease-in-out infinite;
+        }
+        .leader-photo { position: relative; min-height: 360px; background: var(--steel); overflow: hidden; }
+        .leader-photo img {
+            position: absolute; inset: 0; width: 100%; height: 100%; max-width: none;
+            object-fit: cover; object-position: center top; transition: transform 0.8s ease;
+        }
+        .leader-feature:hover .leader-photo img { transform: scale(1.04); }
+        .leader-photo::after {
+            content: ''; position: absolute; inset: 0; pointer-events: none;
+            background: linear-gradient(to top, rgba(13,13,13,0.85) 0%, transparent 40%);
+        }
+        .leader-photo .hazard-edge { position: absolute; left: 0; top: 0; bottom: 0; width: 8px; z-index: 2; }
+        .leader-info { padding: 2rem 1.5rem; display: flex; flex-direction: column; justify-content: center; gap: 1.25rem; }
+        @media (min-width: 800px) { .leader-info { padding: 2.25rem; } }
+        .leader-info h3 { font-size: clamp(2rem, 4.5vw, 2.9rem); line-height: 1; color: #fff; }
+        .leader-info p { color: rgba(255,255,255,0.72); line-height: 1.7; max-width: 46ch; }
+        .info-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 1px; background: var(--steel-light); border: 1px solid var(--steel-light);
+        }
+        .info-cell { background: var(--bg-panel); padding: 0.8rem 1rem; }
+        .info-cell small {
+            display: block; margin-bottom: 0.2rem; font-family: 'Space Mono', monospace;
+            font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent-gold);
+        }
+        .info-cell span { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 1.1rem; color: #fff; }
+
+        /* ---- BUTTONS ---- */
+        .btn-primary {
+            background: var(--amber); color: var(--bg-deep);
+            font-family: 'Barlow Condensed', sans-serif; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+            border: none; padding: 0.9rem 2.2rem;
+            clip-path: polygon(8px 0%,100% 0%,100% calc(100% - 8px),calc(100% - 8px) 100%,0% 100%,0% 8px);
+            transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+            cursor: pointer; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; gap: 0.5rem;
+        }
+        .btn-primary:hover { background: var(--amber-hot); box-shadow: 0 0 24px rgba(255,4,0,0.4); transform: translateY(-2px); }
+        .btn-primary:active { transform: translateY(0); box-shadow: 0 0 10px rgba(255,4,0,0.3); }
+        .btn-primary:focus-visible { outline: 2px solid var(--accent-gold); outline-offset: 2px; }
+
+        .contact-form-input {
+            width: 100%; background: var(--steel); border: 1px solid var(--steel-light);
+            padding: 0.75rem 1rem; color: var(--white); font-family: 'Barlow', sans-serif; font-size: 16px;
+            outline: none; transition: border-color 0.2s, box-shadow 0.2s; -webkit-appearance: none; appearance: none;
+        }
+        .contact-form-input::placeholder { color: rgba(255,255,255,0.3); }
+        .contact-form-input:focus { border-color: var(--amber); box-shadow: 0 0 0 2px rgba(255,4,0,0.2); }
+
+        .social-icon {
+            background: var(--steel); border: 1px solid var(--steel-light); padding: 0.65rem;
+            display: flex; align-items: center; justify-content: center; transition: all 0.25s; text-decoration: none;
+        }
+        .social-icon:hover { background: var(--amber); border-color: var(--amber); transform: translateY(-3px); }
+        .social-icon:hover i { color: var(--bg-deep) !important; }
+
+        .webmaster-container { max-width: 280px; margin: 3rem auto; padding: 0 1rem; }
+        .webmaster-btn-3d {
+            background: var(--steel); border: 1px solid var(--amber); color: var(--amber);
+            font-family: 'Barlow Condensed', sans-serif; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+            display: flex; align-items: center; gap: 0.75rem; padding: 1rem 2rem; text-decoration: none;
+            transition: all 0.3s; width: 100%; justify-content: center;
+        }
+        .webmaster-btn-3d:hover { background: var(--amber); color: var(--bg-deep); box-shadow: 0 8px 24px rgba(255,4,0,0.4); }
+
+        .map-container { position: relative; overflow: hidden; height: 260px; border: 1px solid var(--steel-light); }
+        .map-container iframe { width: 100%; height: 100%; border: 0; filter: brightness(0.85) contrast(1.1); }
+
+        img { max-width: 100%; height: auto; display: block; }
+
+        @media screen and (-webkit-min-device-pixel-ratio: 0) {
+            select, textarea, input { font-size: 16px !important; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .leader-feature::before, .member-id-dot { animation: none; }
+        }
+
+        /* ---------- Section background: moving words ---------- */
+        .bg-marquee {
+            position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0;
+            display: flex; flex-direction: column; justify-content: space-around;
+            user-select: none; -webkit-user-select: none;
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 10%, #000 90%, transparent 100%);
+                    mask-image: linear-gradient(to bottom, transparent 0%, #000 10%, #000 90%, transparent 100%);
+        }
+        .bg-marquee__row { display: flex; width: max-content; will-change: transform; animation: bgMarqueeLeft var(--bgm-speed, 70s) linear infinite; }
+        .bg-marquee__row.is-reverse { animation-name: bgMarqueeRight; }
+        .bg-marquee__row span {
+            flex: none; padding-right: 0.5em;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(8rem, 24vw, 24rem); line-height: 0.9; letter-spacing: 0.02em; white-space: nowrap;
+            color: rgba(190, 182, 178, 0.045); -webkit-text-stroke: 1px rgba(190, 182, 178, 0.06);
+        }
+        @keyframes bgMarqueeLeft  { from { transform: translate3d(0,0,0); } to { transform: translate3d(-50%,0,0); } }
+        @keyframes bgMarqueeRight { from { transform: translate3d(-50%,0,0); } to { transform: translate3d(0,0,0); } }
+        @media (max-width: 640px) { .bg-marquee__row span { font-size: clamp(6rem, 34vw, 11rem); } }
+        @media (prefers-reduced-motion: reduce) { .bg-marquee__row { animation: none; } }
+    </style>
+</head>
+<body class="min-h-screen">
+<div class="noise-bg"></div>
+
+<!-- ================================================
+     NAVIGATION
+     ================================================ -->
+<nav class="site-nav fixed w-full z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+            <div class="flex-shrink-0 flex items-center">
+                <a href="index.html" class="flex items-center group gap-3">
+                    <img src="images/umrt_logo.png" alt="URRT Logo" class="h-10 w-10 rounded-full transition-all duration-300 group-hover:brightness-125">
+                    <img src="images/urrt_text.png" alt="URRT" class="h-7 md:h-9 transition-all duration-300 group-hover:brightness-125">
+                </a>
+            </div>
+            <div class="hidden md:flex items-baseline gap-6">
+                <a href="projects.html" class="nav-link py-2">Projects</a>
+                <a href="Advisors.html" class="nav-link py-2">Advisors</a>
+                <a href="member.html"   class="nav-link py-2">Team</a>
+                 <a href="gallery.html"    class="nav-link py-2">Gallery</a>
+                <a href="gears.html"    class="nav-link py-2">Gears</a>
+                <a href="video.html"    class="nav-link py-2">Qualification Video</a>
+                <a href="Assets.html"   class="nav-link py-2">Assets</a>
+                <a href="contact.html"  class="nav-link py-2">Contact</a>
+                <a href="Join.html"     class="nav-link py-2">Join Us</a>
+                <a href="sponsor.html"  class="btn-primary text-sm py-2 px-5">Sponsor</a>
+            </div>
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="focus:outline-none transition-colors" style="color:var(--white)" aria-label="Open menu">
+                    <i data-feather="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id="mobile-menu" class="md:hidden hidden" style="background:var(--bg-mid);border-top:1px solid var(--steel-light)">
+        <div class="px-4 py-3 space-y-2">
+            <a href="projects.html" class="block nav-link py-2">Projects</a>
+            <a href="Advisors.html" class="block nav-link py-2">Advisors</a>
+            <a href="member.html"   class="block nav-link py-2">Team</a>
+               <a href="gallery.html"  class="block nav-link py-2">Gallery</a>
+            <a href="gears.html"    class="block nav-link py-2">Gears</a>
+            <a href="video.html"    class="block nav-link py-2">Qualification Video</a>
+            <a href="Assets.html"   class="block nav-link py-2">Assets</a>
+            <a href="contact.html"  class="block nav-link py-2">Contact</a>
+            <a href="Join.html"     class="block nav-link py-2">Join Us</a>
+            <a href="sponsor.html"  class="block nav-link py-2">Become Sponsor</a>
+        </div>
+    </div>
+</nav>
+
+<!-- ================================================
+     MAIN CONTENT
+     ================================================ -->
+<main class="pt-16">
+
+    <!-- Team Year Navigation -->
+    <nav class="team-year-nav" aria-label="Team year">
+        <ul>
+            <li><a href="#" class="nav-link active">2026</a></li>
+            <li><a href="#" class="nav-link">2027</a></li>
+        </ul>
+    </nav>
+
+    <!-- Title -->
+    <div class="title-page" id="team-hero">
+        <h1 class="text-5xl md:text-7xl gradient-text mb-2">2026 TEAM MEMBERS</h1>
+        <div class="flex items-center justify-center gap-3 mt-4">
+            <div class="w-2 h-2 rounded-sm blip" style="background:var(--amber)"></div>
+            <span class="mono text-xs tracking-widest" style="color:rgba(255,255,255,0.4)">ACTIVE MEMBERS — ROBOCUP RESCUE 2026</span>
+            <div class="w-2 h-2 rounded-sm blip" style="background:var(--amber)"></div>
+        </div>
+    </div>
+
+    <div id="roster-wrap" class="grid-bg" style="background-color:var(--bg-deep);position:relative;overflow:hidden">
+    <section class="team-members">
+
+        <div class="text-center mb-8" data-aos="fade-up">
+            <div class="section-label justify-center mb-4">Roster</div>
+            <h2 class="text-5xl md:text-6xl gradient-text">TEAM MEMBERS</h2>
+            <p class="mono text-xs mt-3" style="color:rgba(255,255,255,0.3)">
+                <span id="visible-count">0</span> / <span id="total-count">0</span> OPERATIVES
+            </p>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="team-filter-bar mb-16" data-aos="fade-up" role="group" aria-label="Filter by team">
+            <button class="filter-btn active" data-filter="all"><span class="filter-dot"></span>All Teams</button>
+            <button class="filter-btn" data-filter="software"><span class="filter-dot"></span>Software &amp; Autonomous</button>
+            <button class="filter-btn" data-filter="mechanical"><span class="filter-dot"></span>Mechanical</button>
+            <button class="filter-btn" data-filter="electrical"><span class="filter-dot"></span>Electrical</button>
+            <button class="filter-btn" data-filter="media"><span class="filter-dot"></span>Media &amp; Branding</button>
+            <button class="filter-btn" data-filter="logistics"><span class="filter-dot"></span>Logistics</button>
+        </div>
+
+        <!-- ============================================
+             LEADERSHIP — featured team leader
+             ============================================ -->
+        <div class="roster-block" data-aos="fade-up">
+            <div class="block-head"><h3 class="gradient-text">Leadership</h3></div>
+
+            <!-- ID-003 — TEAM LEADER -->
+            <article class="leader-feature member-card-count" data-team="software">
+                <div class="leader-photo">
+                    <div class="hazard hazard-edge"></div>
+                    <img loading="lazy" src="images/shoukhin.png" alt="Ahmed Jebail Shoukhin">
+                </div>
+                <div class="leader-info">
+                    <div class="section-label gold">ID-003</div>
+                    <h3>Ahmed Jebail Shoukhin</h3>
+                    <p>Overall leader of the UIU Rescue Rover Team, guiding every sub-team toward RoboCup Rescue 2026.</p>
+                    <div class="info-grid">
+                        <div class="info-cell"><small>Role</small><span>Team Leader</span></div>
+                        <div class="info-cell"><small>Sub-Team</small><span>Software &amp; Autonomous</span></div>
+                        <div class="info-cell"><small>Department</small><span>CSE</span></div>
+                    </div>
+                </div>
+            </article>
+        </div>
+
+        <!-- ============================================
+             SUB-TEAM LEADS
+             ============================================ -->
+        <div class="roster-block" data-aos="fade-up">
+            <div class="block-head"><h3 class="gradient-text">Sub-Team Leads</h3></div>
+            <div class="subleads-grid">
+
+                <!-- ID-004 — SOFTWARE -->
+                <article class="member-card member-card-sublead" data-team="software">
+                    <div class="member-photo-wrap">
+                        <img loading="lazy" src="images/athin.png" alt="Nazmul Hasan Athin" class="member-photo">
+                        <div class="member-id-badge"><span class="member-id-dot"></span>ID-004</div>
+                        <div class="member-name-plate"><h3>Nazmul Hasan Athin</h3></div>
+                    </div>
+                    <div class="member-info">
+                        <div class="info-grid">
+                            <div class="info-cell"><small>Role</small><span>Lead</span></div>
+                            <div class="info-cell"><small>Sub-Team</small><span>Software &amp; Autonomous</span></div>
+                            <div class="info-cell"><small>Department</small><span>CSE</span></div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- ID-002 — MECHANICAL -->
+                <article class="member-card member-card-sublead" data-team="mechanical">
+                    <div class="member-photo-wrap">
+                        <img loading="lazy" src="images/mahir.png" alt="Mahir Faisal Nafis" class="member-photo">
+                        <div class="member-id-badge"><span class="member-id-dot"></span>ID-002</div>
+                        <div class="member-name-plate"><h3>Mahir Faisal Nafis</h3></div>
+                    </div>
+                    <div class="member-info">
+                        <div class="info-grid">
+                            <div class="info-cell"><small>Role</small><span>Lead</span></div>
+                            <div class="info-cell"><small>Sub-Team</small><span>Mechanical</span></div>
+                            <div class="info-cell"><small>Department</small><span>EEE</span></div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- ID-010 — ELECTRICAL -->
+                <article class="member-card member-card-sublead" data-team="electrical">
+                    <div class="member-photo-wrap">
+                        <img loading="lazy" src="images/podder.png" alt="Partha Paddar" class="member-photo">
+                        <div class="member-id-badge"><span class="member-id-dot"></span>ID-010</div>
+                        <div class="member-name-plate"><h3>Partha Paddar</h3></div>
+                    </div>
+                    <div class="member-info">
+                        <div class="info-grid">
+                            <div class="info-cell"><small>Role</small><span>Lead</span></div>
+                            <div class="info-cell"><small>Sub-Team</small><span>Electrical</span></div>
+                            <div class="info-cell"><small>Department</small><span>CSE</span></div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- ID-005 — MEDIA & BRANDING -->
+                <article class="member-card member-card-sublead" data-team="media">
+                    <div class="member-photo-wrap">
+                        <img loading="lazy" src="images/yeahyea.png" alt="Md. Yeahyea Hassan Siddique" class="member-photo">
+                        <div class="member-id-badge"><span class="member-id-dot"></span>ID-005</div>
+                        <div class="member-name-plate"><h3>Md. Yeahyea Hassan Siddique</h3></div>
+                    </div>
+                    <div class="member-info">
+                        <div class="info-grid">
+                            <div class="info-cell"><small>Role</small><span>Lead</span></div>
+                            <div class="info-cell"><small>Sub-Team</small><span>Media &amp; Branding</span></div>
+                            <div class="info-cell"><small>Department</small><span>EEE</span></div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- ID-001 — LOGISTICS -->
+                <article class="member-card member-card-sublead" data-team="logistics">
+                    <div class="member-photo-wrap">
+                        <img loading="lazy" src="images/rois.png" alt="Dewan Rois Bin Omar" class="member-photo">
+                        <div class="member-id-badge"><span class="member-id-dot"></span>ID-001</div>
+                        <div class="member-name-plate"><h3>Dewan Rois Bin Omar</h3></div>
+                    </div>
+                    <div class="member-info">
+                        <div class="info-grid">
+                            <div class="info-cell"><small>Role</small><span>Lead</span></div>
+                            <div class="info-cell"><small>Sub-Team</small><span>Logistics</span></div>
+                            <div class="info-cell"><small>Department</small><span>EEE</span></div>
+                        </div>
+                    </div>
+                </article>
+
+            </div>
+        </div>
+
+        <!-- ============================================
+             TEAM MEMBERS
+             ============================================ -->
+        <div class="roster-block" data-aos="fade-up">
+            <div class="block-head"><h3 class="gradient-text">Team Members</h3></div>
+            <div class="members-grid" id="members-grid">
+
+                <!-- ID-006 -->
+                <article class="member-card" data-team="software">
+                    <div class="member-photo-wrap">
+                        <img loading="lazy" src="images/mathin.png" alt="Mathin Ahmed" class="member-photo">
+                        <div class="member-id-badge"><span class="member-id-dot"></span>ID-006</div>
+                        <div class="member-name-plate"><h3>Mathin Ahmed</h3></div>
+                    </div>
+                    <div class="member-info">
+                        <div class="info-grid">
+                            <div class="info-cell"><small>Role</small><span>Member</span></div>
+                            <div class="info-cell"><small>Sub-Team</small><span>Software &amp; Autonomous</span></div>
+                            <div class="info-cell"><small>Department</small><span>CSE</span></div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- ID-007 -->
+                <article class="member-card" data-team="software">
+                    <div class="member-photo-wrap">
+                        <img loading="lazy" src="images/salman.png" alt="Nurer Raihan Salmaan" class="member-photo">
+                        <div class="member-id-badge"><span class="member-id-dot"></span>ID-007</div>
+                        <div class="member-name-plate"><h3>Nurer Raihan Salmaan</h3></div>
+                    </div>
+                    <div class="member-info">
+                        <div class="info-grid">
+                            <div class="info-cell"><small>Role</small><span>Member</span></div>
+                            <div class="info-cell"><small>Sub-Team</small><span>Software &amp; Autonomous</span></div>
+                            <div class="info-cell"><small>Department</small><span>CSE</span></div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- ID-011 -->
+                <article class="member-card" data-team="software">
+                    <div class="member-photo-wrap">
+                        <img loading="lazy" src="images/simi.png" alt="Tanjila Akter Simi" class="member-photo">
+                        <div class="member-id-badge"><span class="member-id-dot"></span>ID-011</div>
+                        <div class="member-name-plate"><h3>Tanjila Akter Simi</h3></div>
+                    </div>
+                    <div class="member-info">
+                        <div class="info-grid">
+                            <div class="info-cell"><small>Role</small><span>Member</span></div>
+                            <div class="info-cell"><small>Sub-Team</small><span>Software &amp; Autonomous</span></div>
+                            <div class="info-cell"><small>Department</small><span>CSE</span></div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- ID-015 -->
+                <article class="member-card" data-team="software">
+                    <div class="member-photo-wrap">
+                        <img loading="lazy" src="images/sokanto.png" alt="Sokanto Roy" class="member-photo">
+                        <div class="member-id-badge"><span class="member-id-dot"></span>ID-015</div>
+                        <div class="member-name-plate"><h3>Sokanto Roy</h3></div>
+                    </div>
+                    <div class="member-info">
+                        <div class="info-grid">
+                            <div class="info-cell"><small>Role</small><span>Member</span></div>
+                            <div class="info-cell"><small>Sub-Team</small><span>Software &amp; Autonomous</span></div>
+                            <div class="info-cell"><small>Department</small><span>CSE</span></div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- ID-009 -->
+                <article class="member-card" data-team="mechanical">
+                    <div class="member-photo-wrap">
+                        <img loading="lazy" src="images/nazmul.png" alt="Nazmul Hasan Nayem" class="member-photo">
+                        <div class="member-id-badge"><span class="member-id-dot"></span>ID-009</div>
+                        <div class="member-name-plate"><h3>Nazmul Hasan Nayem</h3></div>
+                    </div>
+                    <div class="member-info">
+                        <div class="info-grid">
+                            <div class="info-cell"><small>Role</small><span>Member</span></div>
+                            <div class="info-cell"><small>Sub-Team</small><span>Mechanical</span></div>
+                            <div class="info-cell"><small>Department</small><span>CSE</span></div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- ID-012 -->
+                <article class="member-card" data-team="mechanical">
+                    <div class="member-photo-wrap">
+                        <img loading="lazy" src="images/illin.png" alt="Dayad Muhammad Illin" class="member-photo">
+                        <div class="member-id-badge"><span class="member-id-dot"></span>ID-012</div>
+                        <div class="member-name-plate"><h3>Dayad Muhammad Illin</h3></div>
+                    </div>
+                    <div class="member-info">
+                        <div class="info-grid">
+                            <div class="info-cell"><small>Role</small><span>Member</span></div>
+                            <div class="info-cell"><small>Sub-Team</small><span>Mechanical</span></div>
+                            <div class="info-cell"><small>Department</small><span>CSE</span></div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- ID-013 -->
+                <article class="member-card" data-team="mechanical">
+                    <div class="member-photo-wrap">
+                        <img loading="lazy" src="images/ifti.png" alt="Iftiaque Ahmed Auporba" class="member-photo">
+                        <div class="member-id-badge"><span class="member-id-dot"></span>ID-013</div>
+                        <div class="member-name-plate"><h3>Iftiaque Ahmed Auporba</h3></div>
+                    </div>
+                    <div class="member-info">
+                        <div class="info-grid">
+                            <div class="info-cell"><small>Role</small><span>Member</span></div>
+                            <div class="info-cell"><small>Sub-Team</small><span>Mechanical</span></div>
+                            <div class="info-cell"><small>Department</small><span>CSE</span></div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- ID-014 -->
+                <article class="member-card" data-team="mechanical">
+                    <div class="member-photo-wrap">
+                        <img loading="lazy" src="images/saad.png" alt="Saad Ahmmed Tonmoy" class="member-photo">
+                        <div class="member-id-badge"><span class="member-id-dot"></span>ID-014</div>
+                        <div class="member-name-plate"><h3>Saad Ahmmed Tonmoy</h3></div>
+                    </div>
+                    <div class="member-info">
+                        <div class="info-grid">
+                            <div class="info-cell"><small>Role</small><span>Member</span></div>
+                            <div class="info-cell"><small>Sub-Team</small><span>Mechanical</span></div>
+                            <div class="info-cell"><small>Department</small><span>EEE</span></div>
+                        </div>
+                    </div>
+                </article>
+
+            </div>
+        </div>
+    </section>
+    </div>
+</main>
+
+<!-- ================================================
+     CONTACT
+     ================================================ -->
+<section id="contact" class="py-20 px-4 sm:px-6 lg:px-8" style="background-color:var(--bg-mid)">
+    <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-16" data-aos="fade-up">
+            <div class="section-label justify-center mb-4">Get In Touch</div>
+            <h2 class="text-5xl md:text-6xl gradient-text">CONTACT US</h2>
+        </div>
+        <div class="grid lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2 grid md:grid-cols-2 gap-8">
+                <div class="space-y-8" data-aos="fade-right">
+                    <div>
+                        <div class="flex justify-center mb-4">
+                            <img src="images/aboutuslogo.png" alt="URRT Logo" class="h-20 w-20 rounded-full mx-auto" style="border:2px solid var(--amber)">
+                        </div>
+                        <h3 class="text-3xl gradient-text mb-4">ABOUT URRT</h3>
+                        <p style="color:rgba(255,255,255,0.75)" class="leading-relaxed">The UIU Rescue Rover Team (URRT) is a group of passionate students dedicated to designing and building advanced rescue rovers for disaster response and emergency operations. Our mission is to leverage engineering innovation and autonomous technologies to assist in search, Rescue, and Life-saving missions, pushing the boundaries of robotics for humanitarian impact.</p>
+                    </div>
+                    <div class="space-y-5">
+                        <div class="flex items-start gap-4 group cursor-pointer">
+                            <div class="p-3 flex items-center justify-center transition-all duration-300 group-hover:scale-110 flex-shrink-0" style="background:rgba(255,4,0,0.1);border:1px solid rgba(255,4,0,0.3)">
+                                <i class="fas fa-envelope" style="color:var(--amber)"></i>
+                            </div>
+                            <div>
+                                <h4 class="condensed font-bold tracking-wide text-white">EMAIL</h4>
+                                <p class="mono text-sm" style="color:rgba(255,255,255,0.6)">rescuerover@cair.uiu.ac.bd</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4 group cursor-pointer">
+                            <div class="p-3 flex items-center justify-center transition-all duration-300 group-hover:scale-110 flex-shrink-0" style="background:rgba(255,4,0,0.1);border:1px solid rgba(255,4,0,0.3)">
+                                <i class="fas fa-phone" style="color:var(--amber)"></i>
+                            </div>
+                            <div>
+                                <h4 class="condensed font-bold tracking-wide text-white">PHONE</h4>
+                                <p class="mono text-sm" style="color:rgba(255,255,255,0.6)">+880 1909356346</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4 group cursor-pointer">
+                            <div class="p-3 flex items-center justify-center transition-all duration-300 group-hover:scale-110 flex-shrink-0" style="background:rgba(255,4,0,0.1);border:1px solid rgba(255,4,0,0.3)">
+                                <i class="fas fa-map-marker-alt" style="color:var(--amber)"></i>
+                            </div>
+                            <div>
+                                <h4 class="condensed font-bold tracking-wide text-white">ADDRESS</h4>
+                                <p class="mono text-sm" style="color:rgba(255,255,255,0.6)">United International University, Dhaka, Bangladesh</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="condensed font-bold tracking-widest mb-4 text-white">FOLLOW OUR JOURNEY</h4>
+                        <div class="flex gap-3 flex-wrap">
+                            <a href="https://www.facebook.com/share/1FaSe57Vd5/" target="_blank" aria-label="Facebook" class="social-icon"><i class="fab fa-facebook-f" style="color:var(--amber)"></i></a>
+                            <a href="https://www.instagram.com/uiurescuerover?igsh=MTVjeTY1cW9xeXV3aw==" target="_blank" aria-label="Instagram" class="social-icon"><i class="fab fa-instagram" style="color:var(--amber)"></i></a>
+                            <a href="https://www.linkedin.com/company/uiu-mars-rover-team-umrt/" target="_blank" aria-label="LinkedIn" class="social-icon"><i class="fab fa-linkedin-in" style="color:var(--amber)"></i></a>
+                            <a href="https://www.youtube.com/@uiumarsrover" target="_blank" aria-label="YouTube" class="social-icon"><i class="fab fa-youtube" style="color:var(--amber)"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div data-aos="fade-left">
+                    <div class="panel p-5 h-full">
+                        <h3 class="condensed text-xl font-bold tracking-wide text-white mb-4">VISIT OUR CAMPUS</h3>
+                        <div class="map-container mb-4">
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3650.598346556767!2d90.42461497504862!3d23.79810607863617!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c7b33c7b87cd%3A0x8c3881b66eeb7e0c!2sUnited%20International%20University!5e0!3m2!1sen!2sbd!4v1700000000000!5m2!1sen!2sbd" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex items-start gap-2 mono text-xs" style="color:rgba(255,255,255,0.6)"><i class="fas fa-map-signs mt-1 flex-shrink-0" style="color:var(--amber)"></i><span>United City, Madani Avenue, Badda, Dhaka 1212</span></div>
+                            <div class="flex items-center gap-2 mono text-xs" style="color:rgba(255,255,255,0.6)"><i class="fas fa-clock flex-shrink-0" style="color:var(--amber)"></i><span>Sun-Thu, 8AM-8PM</span></div>
+                        </div>
+                        <a href="https://maps.app.goo.gl/CwgAxRgJQgHv7Vjq8" target="_blank" class="btn-primary block text-center text-sm mt-4 no-underline">Open in Google Maps</a>
+                    </div>
+                </div>
+            </div>
+            <div data-aos="fade-up">
+                <div class="panel p-8">
+                    <h3 class="text-3xl gradient-text mb-6">SEND A MESSAGE</h3>
+                    <form class="space-y-5" id="contact-form">
+                        <div>
+                            <label for="contact-name" class="condensed font-semibold text-sm tracking-wider block mb-2" style="color:rgba(255,255,255,0.6)">FULL NAME</label>
+                            <input type="text" id="contact-name" class="contact-form-input" placeholder="Enter your name" required>
+                        </div>
+                        <div>
+                            <label for="contact-email" class="condensed font-semibold text-sm tracking-wider block mb-2" style="color:rgba(255,255,255,0.6)">EMAIL ADDRESS</label>
+                            <input type="email" id="contact-email" class="contact-form-input" placeholder="your.email@example.com" required>
+                        </div>
+                        <div>
+                            <label for="contact-subject" class="condensed font-semibold text-sm tracking-wider block mb-2" style="color:rgba(255,255,255,0.6)">SUBJECT</label>
+                            <select id="contact-subject" class="contact-form-input appearance-none" required>
+                                <option value="">Select a subject</option>
+                                <option value="Team Inquiry">Team Inquiry</option>
+                                <option value="Collaboration">Collaboration</option>
+                                <option value="Sponsorship">Sponsorship</option>
+                                <option value="Recruitment">Recruitment</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="contact-message" class="condensed font-semibold text-sm tracking-wider block mb-2" style="color:rgba(255,255,255,0.6)">MESSAGE</label>
+                            <textarea id="contact-message" rows="4" class="contact-form-input resize-none" placeholder="Write your message..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary w-full text-sm">
+                            Send Message <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================================================
+     WEBMASTER
+     ================================================ -->
+<div class="webmaster-container" data-aos="fade-up" data-aos-delay="300">
+    <a href="webmaster.html" class="webmaster-btn-3d">
+        <i class="fas fa-code"></i>
+        <span class="condensed font-bold tracking-widest">OUR WEBMASTERS</span>
+    </a>
+</div>
+
+<!-- ================================================
+     FOOTER
+     ================================================ -->
+<footer style="background:var(--bg-deep);border-top:1px solid var(--steel-light)" class="py-8 px-4 sm:px-6 lg:px-8">
+    <div class="hazard h-1 mb-8 opacity-60"></div>
+    <div class="max-w-7xl mx-auto">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex gap-5 justify-center">
+                <a href="https://www.facebook.com/share/1FaSe57Vd5/" target="_blank" aria-label="Facebook" style="color:rgba(255,255,255,0.5)" onmouseover="this.style.color='var(--amber)'" onmouseout="this.style.color='rgba(255,255,255,0.5)'"><i class="fab fa-facebook-f text-lg"></i></a>
+                <a href="https://www.instagram.com/uiurescuerover?igsh=MTVjeTY1cW9xeXV3aw==" target="_blank" aria-label="Instagram" style="color:rgba(255,255,255,0.5)" onmouseover="this.style.color='var(--amber)'" onmouseout="this.style.color='rgba(255,255,255,0.5)'"><i class="fab fa-instagram text-lg"></i></a>
+                <a href="https://www.linkedin.com/company/uiu-mars-rover-team-umrt/" target="_blank" aria-label="LinkedIn" style="color:rgba(255,255,255,0.5)" onmouseover="this.style.color='var(--amber)'" onmouseout="this.style.color='rgba(255,255,255,0.5)'"><i class="fab fa-linkedin-in text-lg"></i></a>
+                <a href="https://www.youtube.com/@uiumarsrover" target="_blank" aria-label="YouTube" style="color:rgba(255,255,255,0.5)" onmouseover="this.style.color='var(--amber)'" onmouseout="this.style.color='rgba(255,255,255,0.5)'"><i class="fab fa-youtube text-lg"></i></a>
+            </div>
+            <p class="mono text-xs" style="color:rgba(255,255,255,0.3)">&copy; 2026 URRT - UIU Rescue Rover Team. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<script>
+    AOS.init({ duration: 800, easing: 'ease-in-out', once: true });
+    if (typeof feather !== 'undefined') feather.replace();
+
+    // Mobile menu
+    document.getElementById('mobile-menu-button').addEventListener('click', function() {
+        document.getElementById('mobile-menu').classList.toggle('hidden');
+    });
+
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                e.preventDefault();
+                window.scrollTo({ top: targetElement.offsetTop - 80, behavior: 'smooth' });
+                const mobileMenu = document.getElementById('mobile-menu');
+                if (!mobileMenu.classList.contains('hidden')) mobileMenu.classList.add('hidden');
+            }
+        });
+    });
+
+    // Contact form
+    document.getElementById('contact-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const name    = document.getElementById('contact-name').value;
+        const email   = document.getElementById('contact-email').value;
+        const subject = document.getElementById('contact-subject').value;
+        const message = document.getElementById('contact-message').value;
+        const mailtoLink = `mailto:rescuerover@cair.uiu.ac.bd?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`)}`;
+        window.location.href = mailtoLink;
+    });
+
+    // ---- FILTER LOGIC ----
+    // Everything with a data-team is a person: the leader feature, sub-leads and members.
+    const people  = document.querySelectorAll('[data-team]');
+    const countEl = document.getElementById('visible-count');
+    document.getElementById('total-count').textContent = people.length;
+    countEl.textContent = people.length;
+
+    function updateRosterBlockVisibility() {
+        document.querySelectorAll('.roster-block').forEach(block => {
+            const hasVisible = block.querySelector('[data-team]:not(.hidden-card)');
+            block.classList.toggle('section-empty', !hasVisible);
+        });
+    }
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+
+            const filter = this.dataset.filter;
+            let visible = 0;
+            people.forEach(el => {
+                const match = filter === 'all' || el.dataset.team === filter;
+                el.classList.toggle('hidden-card', !match);
+                if (match) visible++;
+            });
+
+            countEl.textContent = visible;
+            updateRosterBlockVisibility();
+        });
+    });
+</script>
+
+<script>
+/* ---------- Moving background words (same effect as the other pages) ---------- */
+(function () {
+    const WORDS = {
+        'team-hero':   ['URRT 2026', 'ROBOCUP RESCUE'],
+        'roster-wrap': ['MEET THE TEAM', 'RESCUE ROVER', 'UIU URRT']
+    };
+    const SPEEDS = [75, 95, 85];
+
+    function build(words) {
+        const layer = document.createElement('div');
+        layer.className = 'bg-marquee';
+        layer.setAttribute('aria-hidden', 'true');
+        words.forEach(function (w, i) {
+            const row = document.createElement('div');
+            row.className = 'bg-marquee__row' + (i % 2 ? ' is-reverse' : '');
+            row.style.setProperty('--bgm-speed', SPEEDS[i % SPEEDS.length] + 's');
+            const half = (w + '  \u2022  ').repeat(4);
+            for (let k = 0; k < 2; k++) {
+                const s = document.createElement('span');
+                s.textContent = half;
+                row.appendChild(s);
+            }
+            layer.appendChild(row);
+        });
+        return layer;
+    }
+
+    function init() {
+        Object.keys(WORDS).forEach(function (id) {
+            const sec = document.getElementById(id);
+            if (!sec || sec.querySelector(':scope > .bg-marquee')) return;
+            if (getComputedStyle(sec).position === 'static') sec.style.position = 'relative';
+            sec.style.overflow = 'hidden';
+            Array.prototype.forEach.call(sec.children, function (ch) {
+                if (getComputedStyle(ch).position === 'static') {
+                    ch.style.position = 'relative';
+                    ch.style.zIndex = '1';
+                }
+            });
+            sec.prepend(build(WORDS[id]));
+        });
+    }
+
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,2034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <link rel="icon" href="images/umrt_logo.png" type="image/x-icon">
+    <title>URRT - UIU Rescue Rover Team</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.css' rel='stylesheet' />
+
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Barlow+Condensed:wght@300;400;500;600;700;800;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <style>
+        /* =============================================
+           INDUSTRIAL EMERGENCY COMMAND THEME
+        ============================================= */
+        :root {
+            --bg-deep:    #0d0d0d;
+            --bg-mid:     #141414;
+            --bg-panel:   #1a1a1a;
+            --bg-card:    #1f1f1f;
+            --steel:      #2a2a2a;
+            --steel-light:#3a3a3a;
+            --amber:      #ff0400;
+            --amber-hot:  #ff6200;
+            --amber-dim:  #b45309;
+            --red:        #ef4444;
+            --red-hot:    #f87171;
+            --white:      #ffffff;
+            --muted:      #ffffff;
+            --muted-dim:  #ffffff;
+            --accent-teal:#ffbf00;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+        html { overflow-x: hidden; scroll-behavior: smooth; }
+        body {
+            font-family: 'Barlow', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--white);
+            overflow-x: hidden;
+            cursor: default;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.04em;
+        }
+
+        .hazard {
+            background: repeating-linear-gradient(
+                -55deg,
+                var(--amber) 0px, var(--amber) 10px,
+                var(--bg-deep) 10px, var(--bg-deep) 22px
+            );
+        }
+        .hazard-thin {
+            background: repeating-linear-gradient(
+                -55deg,
+                var(--amber) 0px, var(--amber) 4px,
+                transparent 4px, transparent 10px
+            );
+            opacity: 0.35;
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, var(--amber), var(--amber-hot));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .gradient-text-red {
+            background: linear-gradient(90deg, var(--red), #ff6b35);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .mono { font-family: 'Space Mono', monospace; }
+        .condensed { font-family: 'Barlow Condensed', sans-serif; }
+
+        .panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--steel-light);
+            position: relative;
+        }
+        .panel::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--amber), transparent);
+        }
+        .panel-red::before { background: linear-gradient(90deg, var(--red), transparent); }
+        .panel-teal::before { background: linear-gradient(90deg, var(--accent-teal), transparent); }
+
+        .card-hover {
+            transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-6px);
+            border-color: var(--amber) !important;
+            box-shadow: 0 12px 40px rgba(245,158,11,0.18);
+        }
+
+        @keyframes glitch1 {
+            0%,90%,100%  { clip-path: none; transform: none; }
+            91%  { clip-path: polygon(0 20%,100% 20%,100% 40%,0 40%); transform: translateX(-3px); }
+            93%  { clip-path: polygon(0 60%,100% 60%,100% 80%,0 80%); transform: translateX(3px); }
+            95%  { clip-path: none; transform: none; }
+        }
+        .glitch { animation: glitch1 6s infinite; }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent 0px,
+                transparent 3px,
+                rgba(0,0,0,0.08) 3px,
+                rgba(0,0,0,0.08) 4px
+            );
+            pointer-events: none;
+            z-index: 9998;
+        }
+
+        nav.site-nav {
+            background: rgba(13,13,13,0.96);
+            border-bottom: 1px solid var(--steel-light);
+            backdrop-filter: blur(12px);
+        }
+        nav.site-nav::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 100%; height: 1px;
+            background: linear-gradient(90deg, transparent, var(--amber) 30%, var(--amber) 70%, transparent);
+            opacity: 0.4;
+        }
+        .nav-link {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            transition: color 0.2s;
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px; left: 0;
+            width: 0; height: 1px;
+            background: var(--amber);
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover { color: var(--amber); }
+        .nav-link:hover::after { width: 100%; }
+
+        .btn-primary {
+            background: var(--amber);
+            color: var(--bg-deep);
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            border: none;
+            padding: 0.9rem 2.2rem;
+            clip-path: polygon(8px 0%,100% 0%,100% calc(100% - 8px),calc(100% - 8px) 100%,0% 100%,0% 8px);
+            transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+        }
+        .btn-primary:hover {
+            background: var(--amber-hot);
+            box-shadow: 0 0 24px rgba(245,158,11,0.5);
+            transform: translateY(-2px);
+        }
+        .btn-outline {
+            background: transparent;
+            color: var(--white);
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            border: 1px solid rgba(245,245,240,0.4);
+            padding: 0.9rem 2.2rem;
+            clip-path: polygon(8px 0%,100% 0%,100% calc(100% - 8px),calc(100% - 8px) 100%,0% 100%,0% 8px);
+            transition: all 0.2s;
+        }
+        .btn-outline:hover {
+            border-color: var(--amber);
+            color: var(--amber);
+            box-shadow: 0 0 20px rgba(245,158,11,0.2);
+        }
+
+        .section-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--amber);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .section-label::before {
+            content: '';
+            display: block;
+            width: 24px; height: 1px;
+            background: var(--amber);
+        }
+
+        .bracket-box { position: relative; }
+        .bracket-box::before, .bracket-box::after {
+            content: '';
+            position: absolute;
+            width: 20px; height: 20px;
+            border-color: var(--amber);
+            border-style: solid;
+        }
+        .bracket-box::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+        .bracket-box::after { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+        .timeline { position: relative; max-width: 1100px; margin: 0 auto; }
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--amber), var(--amber-dim), transparent);
+            top: 0; bottom: 0; left: 50%;
+            margin-left: -1px;
+        }
+        .timeline-item { padding: 10px 40px; position: relative; width: 50%; box-sizing: border-box; }
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 12px; height: 12px;
+            background: var(--amber);
+            top: 18px; border-radius: 2px;
+            transform: rotate(45deg);
+            z-index: 1;
+            box-shadow: 0 0 10px var(--amber);
+        }
+        .left { left: 0; }
+        .right { left: 50%; }
+        .left::after { right: -6px; }
+        .right::after { left: -6px; }
+        .timeline-content {
+            padding: 20px 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--steel-light);
+            position: relative;
+        }
+        .timeline-content::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 1px;
+            background: linear-gradient(90deg, var(--amber), transparent);
+        }
+        .timeline-content h3 {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--amber);
+        }
+
+        .blog-card {
+            background: var(--bg-card);
+            border: 1px solid var(--steel-light);
+            overflow: hidden;
+            transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+        }
+        .blog-card:hover {
+            border-color: var(--amber);
+            box-shadow: 0 8px 32px rgba(245,158,11,0.15);
+            transform: translateY(-6px);
+        }
+        .blog-image { width: 100%; height: 200px; object-fit: cover; }
+        .blog-date { color: var(--amber); font-family: 'Space Mono', monospace; font-size: 0.75rem; letter-spacing: 0.1em; }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--steel-light);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 2px;
+            background: var(--amber);
+        }
+        .stat-card:hover {
+            border-color: var(--amber);
+            box-shadow: 0 8px 32px rgba(245,158,11,0.15);
+            transform: translateY(-5px);
+        }
+        .stat-number {
+            font-family: 'Space Mono', monospace;
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--amber);
+            line-height: 1;
+        }
+
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(250px,1fr)); gap: 12px; }
+        .gallery-item { overflow: hidden; cursor: pointer; border: 1px solid var(--steel-light); transition: all 0.3s; }
+        .gallery-item:hover { border-color: var(--amber); transform: scale(1.02); }
+        .gallery-item img { width: 100%; height: 200px; object-fit: cover; }
+
+        .contact-form-input {
+            width: 100%;
+            background: var(--steel);
+            border: 1px solid var(--steel-light);
+            padding: 0.75rem 1rem;
+            color: var(--white);
+            font-family: 'Barlow', sans-serif;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .contact-form-input::placeholder { color: var(--muted-dim); }
+        .contact-form-input:focus {
+            border-color: var(--amber);
+            box-shadow: 0 0 0 2px rgba(245,158,11,0.2);
+        }
+
+        .partner-card {
+            background: var(--bg-card);
+            border: 1px solid var(--steel-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            transition: all 0.3s;
+        }
+        .partner-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(245,158,11,0.08), transparent);
+            transition: left 0.5s ease;
+        }
+        .partner-link:hover .partner-card {
+            border-color: var(--amber);
+            box-shadow: 0 4px 24px rgba(245,158,11,0.15);
+            transform: translateY(-4px);
+        }
+        .partner-link:hover .partner-card::before { left: 100%; }
+
+        .prototype-nav-btn {
+            background: transparent;
+            color: var(--muted);
+            border: 1px solid transparent;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            transition: all 0.2s;
+            font-size: 0.85rem;
+        }
+        .prototype-nav-btn.active, .prototype-nav-btn:hover {
+            background: rgba(245,158,11,0.1);
+            border-color: rgba(245,158,11,0.5);
+            color: var(--amber);
+        }
+        .prototype-content { transition: all 0.4s; }
+        .prototype-content.active { display: block; animation: fadeInUp 0.4s ease; }
+        .prototype-content:not(.active) { display: none; }
+        @keyframes fadeInUp { from { opacity:0; transform: translateY(16px); } to { opacity:1; transform: translateY(0); } }
+
+        .competition-card {
+            background: var(--bg-card);
+            border: 1px solid var(--steel-light);
+            transition: all 0.3s;
+        }
+        .competition-card:hover {
+            border-color: var(--red);
+            box-shadow: 0 8px 40px rgba(239,68,68,0.2);
+            transform: translateY(-6px);
+        }
+
+        .map-container { position: relative; overflow: hidden; height: 280px; border: 1px solid var(--steel-light); }
+        @media (max-width: 480px) { .map-container { height: 180px !important; } }
+
+        @keyframes bounceY {
+            0%,100% { transform: translate(-50%, 0); }
+            50% { transform: translate(-50%, -10px); }
+        }
+        .scroll-arrow { animation: bounceY 2s ease-in-out infinite; }
+
+        .noise-bg {
+            position: fixed; top:0; left:0;
+            width:100%; height:100%;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+
+        .social-icon {
+            background: var(--steel);
+            border: 1px solid var(--steel-light);
+            padding: 0.65rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s;
+        }
+        .social-icon:hover {
+            background: var(--amber);
+            border-color: var(--amber);
+            color: var(--bg-deep) !important;
+            transform: translateY(-3px);
+        }
+        .social-icon:hover i { color: var(--bg-deep) !important; }
+
+        /* ---- ACHIEVEMENTS ---- */
+        .ach-list { display: grid; gap: 2.5rem; }
+        .ach-card {
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr);   /* poster column sizes to the poster, text fills the rest */
+            background: var(--bg-card);
+            border: 1px solid var(--steel-light);
+            position: relative;
+            transition: border-color .3s ease, box-shadow .3s ease;
+        }
+        .ach-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; z-index: 4;
+            background: linear-gradient(90deg, var(--amber), transparent);
+        }
+        .ach-card:hover { border-color: var(--amber); box-shadow: 0 16px 40px rgba(255,4,0,.16); }
+        .ach-card:nth-child(even) .ach-media { order: 2; }
+        .ach-media {
+            position: relative;
+            background: #000;
+            display: flex;
+            align-items: center;      /* centres the poster if the text side is taller */
+            justify-content: center;
+        }
+        .ach-media img {
+            display: block;
+            height: clamp(420px, calc(100vh - 230px), 820px);  /* card fits one landscape screen */
+            width: auto;              /* width follows the poster ratio, so nothing is cropped */
+            max-width: 100%;
+            object-fit: contain;
+        }
+        .ach-media::before, .ach-media::after {
+            content: ''; position: absolute; width: 22px; height: 22px; z-index: 2;
+            border: 0 solid var(--amber); pointer-events: none;
+        }
+        .ach-media::before { top: 10px; left: 10px; border-width: 2px 0 0 2px; }
+        .ach-media::after  { bottom: 10px; right: 10px; border-width: 0 2px 2px 0; }
+        .ach-zoom {
+            position: absolute; inset: 0; z-index: 1; width: 100%;
+            background: transparent; border: 0; cursor: zoom-in;
+        }
+        .ach-zoom:focus-visible { outline: 2px solid var(--amber-hot); outline-offset: -4px; }
+        .ach-zoom-hint {
+            position: absolute; right: 14px; top: 14px; z-index: 2; pointer-events: none;
+            display: flex; align-items: center; gap: .4rem;
+            padding: .35rem .7rem; font: 600 .75rem 'Barlow Condensed', sans-serif; letter-spacing: .08em;
+            background: rgba(13,13,13,.8); border: 1px solid var(--steel-light); color: var(--white);
+            opacity: 0; transition: opacity .25s;
+        }
+        .ach-media:hover .ach-zoom-hint, .ach-zoom:focus-visible + .ach-zoom-hint { opacity: 1; }
+        .ach-body { padding: 1.75rem 2.25rem; display: flex; flex-direction: column; justify-content: center; }
+        .ach-body h3 { font-size: clamp(2.25rem, 3.6vw, 3.25rem); line-height: 1; margin: .7rem 0 .5rem; color: var(--white); }
+        .ach-where { font-family: 'Space Mono', monospace; font-size: .8rem; color: var(--amber-hot); }
+        .ach-text { margin-top: 1rem; font-size: .95rem; line-height: 1.65; color: rgba(255,255,255,.85); max-width: 58ch; }
+        .ach-facts {
+            display: grid; grid-template-columns: 1fr 1fr; margin: 1.25rem 0 0;
+            border: 1px solid var(--steel-light); background: var(--bg-panel);
+        }
+        .ach-facts div { padding: .6rem .9rem; border-bottom: 1px solid var(--steel-light); }
+        .ach-facts div:nth-child(odd) { border-right: 1px solid var(--steel-light); }
+        .ach-facts div:nth-last-child(-n+2) { border-bottom: 0; }
+        .ach-facts dt { font: 700 .75rem 'Space Mono', monospace; color: var(--amber-hot); margin-bottom: .25rem; }
+        .ach-facts dd { margin: 0; font: 600 1.05rem 'Barlow Condensed', sans-serif; letter-spacing: .04em; color: var(--white); }
+        .ach-next {
+            display: flex; align-items: center; gap: 1rem; margin-top: 1rem; padding: .7rem .9rem;
+            border-left: 3px solid var(--amber); background: rgba(255,4,0,.07);
+        }
+        .ach-next .mono { font-size: .75rem; color: var(--amber-hot); white-space: nowrap; }
+        .ach-next p { margin: 0; font: 600 1.1rem 'Barlow Condensed', sans-serif; letter-spacing: .05em; color: var(--white); }
+        .ach-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1.25rem; }
+        .ach-date { font: 700 .85rem 'Space Mono', monospace; color: var(--amber-hot); }
+        .ach-dialog { padding: 0; border: 1px solid var(--amber); background: #000; max-width: min(94vw, 1100px); max-height: 94vh; }
+        .ach-dialog::backdrop { background: rgba(0,0,0,.88); }
+        .ach-dialog img { display: block; width: 100%; height: auto; max-height: 94vh; object-fit: contain; cursor: zoom-out; }
+
+        @media (max-width: 1100px) {
+            .ach-card { grid-template-columns: 1fr; }
+            .ach-card:nth-child(even) .ach-media { order: 0; }
+            .ach-media img { width: 100%; height: auto; }
+            .ach-body { padding: 1.75rem 1.25rem; }
+            .ach-zoom-hint { opacity: 1; }
+        }
+        @media (max-width: 480px) {
+            .ach-facts { grid-template-columns: 1fr; }
+            .ach-facts div, .ach-facts div:nth-child(odd) { border-right: 0; border-bottom: 1px solid var(--steel-light); }
+            .ach-facts div:last-child { border-bottom: 0; }
+            .ach-facts div:nth-last-child(2) { border-bottom: 1px solid var(--steel-light); }
+            .ach-next { flex-direction: column; align-items: flex-start; gap: .25rem; }
+        }
+        @media (prefers-reduced-motion: reduce) { .ach-card, .ach-zoom-hint { transition: none; } }
+
+        .webmaster-btn-3d {
+            background: var(--steel);
+            border: 1px solid var(--amber);
+            color: var(--amber);
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            display: flex; align-items: center; gap: 0.75rem;
+            padding: 1rem 2rem;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .webmaster-btn-3d:hover {
+            background: var(--amber);
+            color: var(--bg-deep);
+            box-shadow: 0 8px 24px rgba(245,158,11,0.4);
+        }
+        .webmaster-container { max-width: 280px; margin: 3rem auto; }
+
+        img { max-width: 100%; height: auto; }
+        @media (max-width: 768px) {
+            .timeline::after { left: 20px; }
+            .timeline-item { width: 100%; padding-left: 52px; padding-right: 12px; }
+            .timeline-item.left, .timeline-item.right { left: 0; }
+            .timeline-item.left::after, .timeline-item.right::after { left: 14px; right: auto; }
+        }
+        @media (max-width: 640px) {
+            section.py-20 { padding-top: 3rem !important; padding-bottom: 3rem !important; }
+            h2.text-4xl { font-size: 2.5rem !important; }
+        }
+        @supports (padding: env(safe-area-inset-top)) {
+            nav { padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
+            footer { padding-bottom: calc(env(safe-area-inset-bottom) + 2rem); }
+        }
+
+        .grid-bg {
+            background-image:
+                linear-gradient(rgba(245,158,11,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(245,158,11,0.04) 1px, transparent 1px);
+            background-size: 48px 48px;
+        }
+
+        @keyframes blip { 0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.7)} 50%{box-shadow:0 0 0 10px rgba(239,68,68,0)} }
+        .blip { animation: blip 2s infinite; }
+
+        .tag {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 0.2rem 0.6rem;
+        }
+
+        .cut-corner {
+            clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+        }
+
+        .star { position: absolute; background-color: var(--amber); border-radius: 50%; animation: shooting-star linear infinite; z-index: 1; opacity: 0.6; }
+        .star-1 { width: 2px; height: 2px; top: 10%; left: 10%; animation-duration: 3s; animation-delay: 0s; }
+        .star-2 { width: 1px; height: 1px; top: 30%; left: 80%; animation-duration: 4s; animation-delay: 1s; }
+        .star-3 { width: 2px; height: 2px; top: 70%; left: 20%; animation-duration: 2.5s; animation-delay: 2s; }
+        @keyframes shooting-star { 0%{transform:translateX(0)translateY(0);opacity:0}10%{opacity:0.6}90%{opacity:0.6}100%{transform:translateX(80px)translateY(80px);opacity:0}}
+
+        .btn-amber-sm {
+            background: var(--amber);
+            color: var(--bg-deep);
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            padding: 0.5rem 1rem;
+            border: none;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .btn-amber-sm:hover {
+            background: var(--amber-hot);
+            box-shadow: 0 4px 16px rgba(245,158,11,0.4);
+        }
+
+        .tier-card {
+            background: var(--bg-card);
+            border: 1px solid var(--steel-light);
+            transition: all 0.3s;
+        }
+        .tier-card:hover {
+            border-color: var(--amber);
+            box-shadow: 0 8px 32px rgba(245,158,11,0.15);
+            transform: translateY(-4px);
+        }
+
+/* ---------- Section background: zoomed-in horizontal moving words ---------- */
+.bg-marquee {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 14%, #000 86%, transparent 100%);
+            mask-image: linear-gradient(to bottom, transparent 0%, #000 14%, #000 86%, transparent 100%);
+}
+.bg-marquee__row {
+    display: flex;
+    width: max-content;
+    will-change: transform;
+    animation: bgMarqueeLeft var(--bgm-speed, 70s) linear infinite;
+}
+.bg-marquee__row.is-reverse { animation-name: bgMarqueeRight; }
+.bg-marquee__row span {
+    flex: none;
+    padding-right: 0.5em;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(8rem, 24vw, 24rem);
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    color: rgba(190, 182, 178, 0.045);
+    -webkit-text-stroke: 1px rgba(190, 182, 178, 0.06);
+}
+@keyframes bgMarqueeLeft  { from { transform: translate3d(0,0,0); }    to { transform: translate3d(-50%,0,0); } }
+@keyframes bgMarqueeRight { from { transform: translate3d(-50%,0,0); } to { transform: translate3d(0,0,0); } }
+
+#landscape-hero .bg-marquee__row span {
+    color: rgba(255, 255, 255, 0.10);
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.14);
+}
+#hero-fx .bg-marquee__row span {
+    color: rgba(200, 192, 188, 0.06);
+    -webkit-text-stroke: 1px rgba(200, 192, 188, 0.08);
+}
+
+@media (max-width: 640px) {
+    .bg-marquee__row span { font-size: clamp(6rem, 34vw, 11rem); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .bg-marquee__row { animation: none; }
+}
+    </style>
+</head>
+<body class="min-h-screen">
+
+<div class="noise-bg"></div>
+
+<div class="main-content" id="mainContent">
+
+    <!-- ---- NAVIGATION ---- -->
+    <nav class="site-nav fixed w-full z-50 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="index.html" class="flex items-center group gap-3">
+                        <img src="images/umrt_logo.png" alt="URRT Logo"
+                             class="h-10 w-10 rounded-full transition-all duration-300 group-hover:brightness-125">
+                        <img src="images/urrt_text.png" alt="URRT"
+                             class="h-7 md:h-9 transition-all duration-300 group-hover:brightness-125">
+                    </a>
+                </div>
+
+                <div class="hidden md:flex items-baseline gap-6">
+                    <a href="projects.html"  class="nav-link py-2">Projects</a>
+                    <a href="Advisors.html"  class="nav-link py-2">Advisors</a>
+                    <a href="member.html"    class="nav-link py-2">Team</a>
+                    <a href="gallery.html"    class="nav-link py-2">Gallery</a>
+                    <a href="gears.html"     class="nav-link py-2">Gears</a>
+                    <a href="video.html"     class="nav-link py-2">Qualification Video</a>
+                    <a href="Assets.html"    class="nav-link py-2">Assets</a>
+                    <a href="contact.html"   class="nav-link py-2">Contact</a>
+                    <a href="Join.html"      class="nav-link py-2">Join Us</a>
+                    <a href="sponsor.html"   class="btn-primary text-sm py-2 px-5">Sponsor</a>
+                </div>
+
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-white hover:text-amber-400 focus:outline-none transition-colors" style="--tw-text-opacity:1">
+                        <i data-feather="menu" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="md:hidden hidden" style="background:var(--bg-mid); border-top:1px solid var(--steel-light)">
+            <div class="px-4 py-3 space-y-2">
+                <a href="projects.html" class="block nav-link py-2">Projects</a>
+                <a href="Advisors.html" class="block nav-link py-2">Advisors</a>
+                <a href="member.html"   class="block nav-link py-2">Team</a>
+                <a href="gallery.html"  class="block nav-link py-2">Gallery</a>
+                <a href="gears.html"    class="block nav-link py-2">Gears</a>
+                <a href="video.html"    class="block nav-link py-2">Qualification Video</a>
+                <a href="Assets.html"   class="block nav-link py-2">Assets</a>
+                <a href="contact.html"  class="block nav-link py-2">Contact</a>
+                <a href="Join.html"     class="block nav-link py-2">Join Us</a>
+                <a href="sponsor.html"  class="block nav-link py-2">Become Sponsor</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ================================================
+         HERO SECTION — INTERACTIVE CANVAS (no video, no image)
+         ================================================ -->
+    <section id="hero-fx" class="relative w-full h-screen overflow-hidden" style="background:#050505;touch-action:pan-y">
+        <canvas id="hero-canvas" class="absolute inset-0 w-full h-full"></canvas>
+
+        <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse at center, rgba(13,13,13,0.15) 0%, rgba(13,13,13,0.75) 100%)"></div>
+        <div class="absolute top-0 left-0 w-1 h-full hazard opacity-60 pointer-events-none"></div>
+
+        <div class="relative h-full flex items-center justify-center pointer-events-none">
+            <div class="max-w-7xl mx-auto px-6 w-full text-center" data-aos="fade-up">
+
+                <div class="flex items-center justify-center gap-3 mb-6">
+                    <div class="w-8 h-px" style="background:var(--amber)"></div>
+                    <span class="mono text-xs tracking-widest" style="color:var(--amber)">UIU • RESCUE ROBOTICS • BANGLADESH</span>
+                    <div class="w-8 h-px" style="background:var(--amber)"></div>
+                </div>
+
+                <h1 class="text-5xl md:text-8xl lg:text-9xl font-normal mb-4 glitch" style="line-height:0.95">
+                    UIU RESCUE<br><span class="gradient-text">ROVER TEAM</span>
+                </h1>
+                <div class="mb-4 flex items-center justify-center gap-3">
+                    <div class="hazard h-1 w-24 opacity-80"></div>
+                    <span class="mono text-sm tracking-[0.3em]" style="color:var(--amber-hot)">(URRT)</span>
+                    <div class="hazard h-1 w-24 opacity-80"></div>
+                </div>
+
+                <p class="condensed text-xl md:text-3xl font-semibold tracking-wider mb-4" style="color:var(--amber)">
+                    THE NEWBORN CONVICTION OF SHAPING POSSIBILITIES IN RESCUE
+                </p>
+                <p class="text-base md:text-lg max-w-3xl mx-auto mb-10 leading-relaxed" style="color:rgba(245,245,240,0.75)">
+                    WE INNOVATE AT THE RESCUE SCALE. Advancing rescue robotics research in Bangladesh to build high-quality robotic systems and represent internationally at RoboCup Rescue.
+                </p>
+
+                <div class="flex flex-col sm:flex-row justify-center gap-4 pointer-events-auto" data-aos="fade-up" data-aos-delay="200">
+                    <a href="Join.html" class="btn-primary text-base">Join Our Team</a>
+                    <a href="#sponsor" class="btn-outline text-base">Support Our Mission</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="absolute bottom-6 left-1/2 scroll-arrow z-20">
+            <a href="#our-vision" style="color:rgba(245,158,11,0.7)">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+            </a>
+        </div>
+    </section>
+
+    <!-- ================================================
+         OUR VISION SECTION — AUTO SLIDESHOW
+         ================================================ -->
+    <section id="our-vision" class="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden" style="background-color:var(--bg-mid)">
+        <div class="absolute top-0 left-0 right-0 h-1 hazard opacity-50"></div>
+
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <div class="section-label justify-center mb-4">Our Story</div>
+                <h2 class="text-5xl md:text-6xl gradient-text">OUR VISION</h2>
+                <p class="mt-4 max-w-3xl mx-auto" style="color:var(--muted)">Advancing rescue robotics in Bangladesh to shape the future of emergency response</p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+
+                <div data-aos="fade-right">
+                    <h3 class="text-4xl mb-6" style="font-family:'Bebas Neue',sans-serif; background:linear-gradient(90deg,var(--amber),var(--accent-teal));-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1.1">
+                        BUILDING THE NEXT GENERATION OF RESCUE SYSTEMS
+                    </h3>
+                    <p class="mb-5 leading-relaxed" style="color:rgba(245,245,240,0.75)">
+                        The UIU Rescue Rover Team (URRT) is dedicated to advancing rescue robotics research in Bangladesh. Our mission is to develop high-quality autonomous robotic systems capable of operating in disaster zones and to represent Bangladesh internationally
+                    </p>
+                    <p class="mb-8 leading-relaxed" style="color:rgba(245,245,240,0.75)">
+                        From autonomous navigation stacks to modular manipulator arms, every component we engineer is driven by one goal: <strong style="color:var(--accent-teal)">saving lives through intelligent robotics.</strong>
+                    </p>
+
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="stat-card p-5">
+                            <div class="stat-number text-3xl">15+</div>
+                            <div class="condensed font-bold tracking-wide text-white mt-2 text-sm">Team Members</div>
+                        </div>
+                        <div class="stat-card p-5">
+                            <div class="stat-number text-3xl">03</div>
+                            <div class="condensed font-bold tracking-wide text-white mt-2 text-sm">Rover Prototypes</div>
+                        </div>
+                        <div class="stat-card p-5">
+                            <div class="stat-number text-3xl">50+ </div>
+                            <div class="condensed font-bold tracking-wide text-white mt-2 text-sm">Hours of Testing</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div data-aos="fade-left">
+                    <div class="bracket-box" style="position:relative">
+
+                        <div id="vision-slideshow" style="position:relative;overflow:hidden;border:1px solid rgba(245,158,11,0.35);background:var(--bg-card)">
+
+                            <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0px,transparent 3px,rgba(0,0,0,0.06) 3px,rgba(0,0,0,0.06) 4px);pointer-events:none;z-index:3"></div>
+
+                            <div id="vision-slides" style="display:flex;transition:transform 0.55s cubic-bezier(0.77,0,0.18,1);will-change:transform">
+
+                            </div>
+                        </div>
+
+                        <div style="height:2px;background:var(--steel);margin-top:10px;overflow:hidden">
+                            <div id="vision-progress" style="height:100%;background:linear-gradient(90deg,var(--amber),var(--amber-hot));width:0%;transition:none"></div>
+                        </div>
+
+                        <div id="vision-dots" style="display:flex;justify-content:center;gap:8px;margin-top:12px">
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ================================================
+         PARTNERS & SUPPORTERS
+         ================================================ -->
+    <section class="py-20 px-4 sm:px-6 lg:px-8 grid-bg relative" style="background-color:var(--bg-mid)">
+        <div class="absolute top-0 left-0 right-0 h-1 hazard opacity-50"></div>
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <div class="section-label justify-center mb-4">Partners & Supporters</div>
+                <h2 class="text-5xl md:text-6xl gradient-text">OUR PARTNERS &amp; SUPPORTERS</h2>
+                <p class="mt-4 max-w-3xl mx-auto" style="color:var(--muted)">Collaborating with industry leaders and academic institutions to advance rescue robotics technology</p>
+            </div>
+
+            <div class="mb-20" data-aos="fade-up">
+                <h3 class="condensed text-2xl font-bold tracking-wider text-center mb-10 gradient-text">RESEARCH &amp; DEVELOPMENT PARTNERS</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div class="sponsor" data-aos="zoom-in">
+                        <a href="https://www.solidworks.com/" target="_blank" rel="noopener" class="partner-link group block">
+                            <div class="partner-card p-6 cut-corner" style="height:120px">
+                                <img src="images/solidworks-logo.png" alt="SolidWorks" class="w-36 h-20 object-contain transition-all duration-300">
+                            </div>
+                        </a>
+                    </div>
+                    <div class="sponsor" data-aos="zoom-in" data-aos-delay="50">
+                        <a href="https://protospacemfg.com/" target="_blank" rel="noopener" class="partner-link group block">
+                            <div class="partner-card p-6 cut-corner" style="height:120px">
+                                <img src="images/protospace-logo.png" alt="Protospace" class="w-36 h-20 object-contain transition-all duration-300">
+                            </div>
+                        </a>
+                    </div>
+                    <div class="sponsor" data-aos="zoom-in" data-aos-delay="100">
+                        <a href="https://www.3ds.com/" target="_blank" rel="noopener" class="partner-link group block">
+                            <div class="partner-card p-6 cut-corner" style="height:120px">
+                                <img src="images/Dassauly-systemes-logo.png" alt="Dassault Systèmes" class="w-36 h-20 object-contain transition-all duration-300">
+                            </div>
+                        </a>
+                    </div>
+                    <div class="sponsor" data-aos="zoom-in" data-aos-delay="150">
+                        <a href="https://www.dfrobot.com/" target="_blank" rel="noopener" class="partner-link group block">
+                            <div class="partner-card p-6 cut-corner" style="height:120px">
+                                <img src="images/DFRobot-logo.png" alt="DFRobot" class="w-36 h-20 object-contain transition-all duration-300">
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4 my-12" data-aos="fade-up">
+                <div class="flex-1 h-px" style="background:var(--steel-light)"></div>
+                <span class="mono text-xs px-4 py-1 tracking-widest" style="border:1px solid var(--steel-light);color:var(--muted)">ACADEMIC BACKING</span>
+                <div class="flex-1 h-px" style="background:var(--steel-light)"></div>
+            </div>
+
+            <div data-aos="fade-up">
+                <h3 class="condensed text-2xl font-bold tracking-wider text-center mb-10 gradient-text">ACADEMIC SUPPORTERS</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto mb-12 justify-items-center">
+                    <a href="https://www.uiu.ac.bd/" target="_blank" rel="noopener" class="partner-link group w-full max-w-sm block">
+                        <div class="partner-card p-8 w-full" style="height:180px;flex-direction:column">
+                            <img src="images/uiu-logo.png" alt="UIU" class="w-40 h-20 object-contain transition-all duration-300">
+                        </div>
+                    </a>
+                    <a href="https://www.uiu.ac.bd/cair/" target="_blank" rel="noopener" class="partner-link group w-full max-w-sm block">
+                        <div class="partner-card p-8 w-full" style="height:180px;flex-direction:column">
+                            <img src="images/cair-logo.png" alt="CAIR" class="w-40 h-20 object-contain transition-all duration-300">
+                        </div>
+                    </a>
+                </div>
+                <div class="text-center max-w-3xl mx-auto" data-aos="fade-up">
+                    <p style="color:var(--muted)">Supported by our academic home at United International University and the Center for Artificial Intelligence Research, providing research facilities, mentorship, and institutional backing.</p>
+                </div>
+            </div>
+
+            <div class="mt-14 text-center" data-aos="fade-up">
+                <p class="mono text-xs mb-4" style="color:var(--muted)">// Interested in partnering with us?</p>
+                <a href="#contact" class="btn-primary text-sm inline-flex items-center gap-2">
+                    Become a Partner
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================================================
+         LANDSCAPE HERO (TEAM PHOTO)
+         ================================================ -->
+    <section id="landscape-hero" class="relative w-full overflow-hidden" style="min-height:56vw; max-height:100vh; height:clamp(320px, 56vw, 100vh)">
+        <div class="absolute inset-0">
+            <img src="images/Team.jpeg" alt="Rescue Rover Field Testing" class="w-full h-full object-cover" style="object-position: center center"/>
+        </div>
+        <div class="absolute top-0 left-0 right-0 h-1 hazard opacity-50"></div>
+        <div class="relative h-full flex items-end" style="min-height:inherit">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-10 sm:pb-20"></div>
+        </div>
+    </section>
+
+    <!-- ================================================
+         MISSION TIMELINE
+         ================================================ -->
+    <section id="mission-timeline" class="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden" style="background-color:var(--bg-mid)">
+        <div class="absolute top-0 left-0 right-0 h-1 hazard opacity-50"></div>
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <div class="section-label justify-center mb-4">Chronology</div>
+                <h2 class="text-5xl md:text-6xl gradient-text">MISSION TIMELINE</h2>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item left" data-aos="fade-right">
+                    <div class="timeline-content">
+                        <h3>Team Formation</h3>
+                        <p class="mono text-xs mb-2" style="color:var(--amber)">September 2024</p>
+                        <p style="color:var(--muted)">URRT was established with a vision to advance rescue robotics in Bangladesh.</p>
+                    </div>
+                </div>
+                <div class="timeline-item right" data-aos="fade-left">
+                    <div class="timeline-content">
+                        <h3>First Prototype Zugbee X1</h3>
+                        <p class="mono text-xs mb-2" style="color:var(--amber)">January 2025</p>
+                        <p style="color:var(--muted)">Completed our first rescue rover X1 prototype with basic mobility and sensor systems.</p>
+                    </div>
+                </div>
+                <div class="timeline-item left" data-aos="fade-right">
+                    <div class="timeline-content">
+                        <h3>Final Rescue Rover</h3>
+                        <p class="mono text-xs mb-2" style="color:var(--amber)">January 2026</p>
+                        <p style="color:var(--muted)">Fully Workable</p>
+                    </div>
+                </div>
+                <div class="timeline-item right" data-aos="fade-left">
+                    <div class="timeline-content">
+                        <h3>Preparing TDP and TPF</h3>
+                        <p class="mono text-xs mb-2" style="color:var(--amber)">3rd March 2026</p>
+                        <p style="color:var(--muted)">Ready paper for Team Description and completing the team participation form</p>
+                    </div>
+                </div>
+                <div class="timeline-item left" data-aos="fade-right">
+                    <div class="timeline-content">
+                        <h3>RoboCup Rescue 2026</h3>
+                        <p class="mono text-xs mb-2" style="color:var(--amber)">July 2026</p>
+                        <p style="color:var(--muted)">Competed in our first RoboCup Rescue League in Incheon, South Korea and finished 3rd among newcomers.</p>
+                    </div>
+                </div>
+                <div class="timeline-item right" data-aos="fade-left">
+                    <div class="timeline-content">
+                        <h3>RoboCup Rescue 2027</h3>
+                        <p class="mono text-xs mb-2" style="color:var(--amber)">Upcoming</p>
+                        <p style="color:var(--muted)">Preparing to represent Bangladesh again in Germany.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================================================
+         COMPETITIONS
+         ================================================ -->
+    <section id="robotics-competitions" class="py-20 px-4 sm:px-6 lg:px-8 grid-bg relative overflow-hidden" style="background-color:var(--bg-deep)">
+        <div class="absolute top-0 left-0 right-0 h-1 hazard opacity-50"></div>
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <div class="section-label justify-center mb-4">Global Stage</div>
+                <h2 class="text-5xl md:text-6xl"><span class="gradient-text">TARGETED GLOBAL ROBOTICS</span> CHALLENGES</h2>
+                <p class="mt-4 max-w-2xl mx-auto" style="color:var(--muted)">Our roadmap to compete on the world stage and push the boundaries of rescue robotics</p>
+            </div>
+
+            <div class="competition-card cut-corner relative" data-aos="fade-up">
+                <div class="flex flex-col md:flex-row items-center gap-0">
+
+                    <div class="flex-shrink-0 flex items-center justify-center p-10"
+                         style="background:rgba(0, 0, 0, 0.05); border-right:1px solid var(--steel-light); min-width:220px; min-height:220px;">
+                        <img src="images/robot.png" alt="RoboCup Rescue"
+                             style="width:160px; height:160px; object-fit:contain;">
+                    </div>
+
+                    <div class="flex-1 p-8">
+                        <div class="flex flex-wrap items-center gap-4 mb-4">
+                            <h3 class="text-4xl gradient-text-red" style="line-height:1">ROBOCUP RESCUE</h3>
+                            <div class="inline-flex items-center px-3 py-1"
+                                 style="background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3)">
+                                <span class="mono text-xs" style="color:var(--red-hot)">Incheon, South Korea · 2026</span>
+                            </div>
+                        </div>
+
+                        <p style="color:var(--muted)" class="mb-6 leading-relaxed max-w-3xl">
+                            The world's premier competition for urban search and rescue robots. URRT made its debut here in July 2026, competing against experienced international teams and finishing 3rd among newcomers.
+                        </p>
+
+                        <div class="flex flex-wrap gap-8 items-start mb-6">
+                            <div class="flex gap-4">
+                                <div class="panel p-4 panel-red text-center" style="min-width:90px">
+                                    <div class="mono text-2xl font-bold" style="color:var(--red)">25+</div>
+                                    <div class="mono text-xs" style="color:var(--muted)">Years Running</div>
+                                </div>
+                                <div class="panel p-4 text-center" style="min-width:90px; border-color:rgba(245,158,11,0.3)">
+                                    <div class="mono text-2xl font-bold" style="color:var(--amber)">40+</div>
+                                    <div class="mono text-xs" style="color:var(--muted)">Countries</div>
+                                </div>
+                            </div>
+
+                            <div class="space-y-2">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-5 h-5 flex items-center justify-center flex-shrink-0" style="background:rgba(239,68,68,0.2)">
+                                        <i class="fas fa-check text-xs" style="color:var(--red)"></i>
+                                    </div>
+                                    <span style="color:var(--muted)" class="text-sm">Autonomous Navigation</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-5 h-5 flex items-center justify-center flex-shrink-0" style="background:rgba(239,68,68,0.2)">
+                                        <i class="fas fa-check text-xs" style="color:var(--red)"></i>
+                                    </div>
+                                    <span style="color:var(--muted)" class="text-sm">Victim Detection</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-5 h-5 flex items-center justify-center flex-shrink-0" style="background:rgba(239,68,68,0.2)">
+                                        <i class="fas fa-check text-xs" style="color:var(--red)"></i>
+                                    </div>
+                                    <span style="color:var(--muted)" class="text-sm">Mapping &amp; Navigation</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <a href="https://2026.robocup.org/leagues/robocuprescue/" target="_blank" rel="noopener" class="btn-primary inline-flex items-center gap-2 text-sm">
+                            COMPETITION DETAILS <i class="fas fa-external-link-alt text-xs"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- UPCOMING: GERMANY 2027 -->
+            <div class="competition-card cut-corner relative" data-aos="fade-up" style="margin-top:2rem">
+                <div class="flex flex-col md:flex-row items-center gap-0">
+
+                    <div class="flex-shrink-0 flex items-center justify-center p-10"
+                         style="background:rgba(0, 0, 0, 0.05); border-right:1px solid var(--steel-light); min-width:220px; min-height:220px;">
+                        <!-- PUT YOUR GERMANY LOGO AT images/robocup2027.png (until then, the flag icon shows) -->
+                        <img src="images/RCgermany.png" alt="RoboCup 2027 Germany"
+                             style="width:160px; height:160px; object-fit:contain;"
+                             onerror="this.outerHTML='<i class=&quot;fas fa-flag-checkered&quot; style=&quot;font-size:3.5rem;color:var(--red)&quot;></i>'">
+                    </div>
+
+                    <div class="flex-1 p-8">
+                        <div class="flex flex-wrap items-center gap-4 mb-4">
+                            <h3 class="text-4xl gradient-text-red" style="line-height:1">ROBOCUP RESCUE</h3>
+                            <div class="inline-flex items-center px-3 py-1"
+                                 style="background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3)">
+                                <span class="mono text-xs" style="color:var(--red-hot)">Nuremberg, Germany · 2027 · UPCOMING</span>
+                            </div>
+                        </div>
+
+                        <p style="color:var(--muted)" class="mb-6 leading-relaxed max-w-3xl">
+                            Our next mission. After debuting in Incheon, URRT is preparing to represent Bangladesh again at RoboCup Rescue in Germany, with an upgraded rover and a stronger team.
+                        </p>
+
+                        <div class="flex flex-wrap gap-8 items-start mb-6">
+                            <div class="flex gap-4">
+                                <div class="panel p-4 panel-red text-center" style="min-width:90px">
+                                    <div class="mono text-2xl font-bold" style="color:var(--red)">2027</div>
+                                    <div class="mono text-xs" style="color:var(--muted)">Next Event</div>
+                                </div>
+                                <div class="panel p-4 text-center" style="min-width:90px; border-color:rgba(245,158,11,0.3)">
+                                    <div class="mono text-2xl font-bold" style="color:var(--amber)">2ND</div>
+                                    <div class="mono text-xs" style="color:var(--muted)">Participation</div>
+                                </div>
+                            </div>
+
+                            <div class="space-y-2">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-5 h-5 flex items-center justify-center flex-shrink-0" style="background:rgba(239,68,68,0.2)">
+                                        <i class="fas fa-check text-xs" style="color:var(--red)"></i>
+                                    </div>
+                                    <span style="color:var(--muted)" class="text-sm">Autonomous Navigation</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-5 h-5 flex items-center justify-center flex-shrink-0" style="background:rgba(239,68,68,0.2)">
+                                        <i class="fas fa-check text-xs" style="color:var(--red)"></i>
+                                    </div>
+                                    <span style="color:var(--muted)" class="text-sm">Victim Detection</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-5 h-5 flex items-center justify-center flex-shrink-0" style="background:rgba(239,68,68,0.2)">
+                                        <i class="fas fa-check text-xs" style="color:var(--red)"></i>
+                                    </div>
+                                    <span style="color:var(--muted)" class="text-sm">Mapping &amp; Navigation</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <a href="https://www.robocup.org/" target="_blank" rel="noopener" class="btn-primary inline-flex items-center gap-2 text-sm">
+                            COMPETITION DETAILS <i class="fas fa-external-link-alt text-xs"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================================================
+         ACHIEVEMENTS
+         ================================================ -->
+    <section id="achievements" class="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden" style="background-color:var(--bg-panel)" aria-labelledby="achievements-title">
+        <div class="absolute top-0 left-0 right-0 h-1 hazard opacity-50"></div>
+        <div class="mx-auto relative z-10" style="max-width:1800px">
+
+            <div class="text-center mb-10" data-aos="fade-up">
+                <div class="section-label justify-center mb-4">Recognitions</div>
+                <h2 id="achievements-title" class="text-5xl md:text-6xl gradient-text">OUR ACHIEVEMENTS</h2>
+                <p class="mt-4 max-w-2xl mx-auto" style="color:var(--muted)">Milestones that mark URRT's journey in rescue robotics</p>
+            </div>
+
+            <div class="ach-list">
+                <article class="ach-card" data-aos="fade-up">
+                    <div class="ach-media">
+                        <img src="images/korea.jpg" loading="lazy"
+                             alt="URRT members holding the Bangladesh and UIU flags at RoboCup 2026 in Incheon. Results: 1st among South Asian teams, 3rd among 9 newcomers, 11th in Tracked Robot, 15th overall among 27 teams.">
+                        <button type="button" class="ach-zoom" data-src="images/korea.jpg" aria-label="Enlarge achievement poster"></button>
+                        <span class="ach-zoom-hint"><i class="fas fa-expand" aria-hidden="true"></i> ENLARGE</span>
+                    </div>
+
+                    <div class="ach-body">
+                        <span class="tag self-start" style="background:rgba(255,4,0,.12);border:1px solid rgba(255,4,0,.35);color:var(--amber-hot)">Rescue Rover Team</span>
+                        <h3>3rd Place Among Newcomers</h3>
+                        <p class="ach-where">RoboCup Rescue League 2026 · Incheon, South Korea</p>
+
+                        <p class="ach-text">
+                            In our first-ever RoboCup Rescue League, URRT competed against experienced teams from Germany, Japan, Austria, the USA, South Korea, Italy, and more, to test our technology against international standards.
+                        </p>
+
+                        <dl class="ach-facts">
+                            <div><dt>EVENT</dt><dd>RRL World Championship</dd></div>
+                            <div><dt>DATES</dt><dd>2–6 July 2026</dd></div>
+                            <div><dt>VENUE</dt><dd>Songdo ConvensiA</dd></div>
+                            <div><dt>CATEGORY</dt><dd>Tracked Robot</dd></div>
+                        </dl>
+
+                        <div class="ach-next">
+                            <span class="mono">NEXT MISSION</span>
+                            <p>See you at RoboCup Rescue 2027 in Germany!</p>
+                        </div>
+
+                        <div class="ach-actions">
+                            <span class="ach-date">July 2026</span>
+                            <a href="https://2026.robocup.org/leagues/robocuprescue/" target="_blank" rel="noopener" class="btn-primary inline-flex items-center gap-2 text-sm">
+                                Competition details <i class="fas fa-external-link-alt text-xs" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <dialog id="ach-dialog" class="ach-dialog" aria-label="Achievement poster">
+        <img id="ach-dialog-img" src="" alt="URRT achievement poster, RoboCup 2026">
+    </dialog>
+
+    <!-- ================================================
+         SPONSOR SECTION
+         ================================================ -->
+    <section id="sponsor" class="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden grid-bg" style="background-color:var(--bg-deep)">
+        <div class="absolute top-0 left-0 right-0 h-1 hazard opacity-50"></div>
+        <div class="star star-1"></div>
+        <div class="star star-2"></div>
+        <div class="star star-3"></div>
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <div class="section-label justify-center mb-4">Support</div>
+                <h2 class="text-5xl md:text-6xl gradient-text">BECOME OUR SPONSOR</h2>
+                <p class="mt-4 max-w-3xl mx-auto text-lg" style="color:var(--muted)">Join our journey to the stars. Your sponsorship directly fuels innovation and inspires the next generation of explorers.</p>
+            </div>
+
+            <div class="mt-12 text-center" data-aos="fade-up">
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="mailto:rescuerover@cair.uiu.ac.bd" class="btn-primary text-sm inline-flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg>
+                        Contact Partnership Team
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================================================
+         CONTACT
+         ================================================ -->
+    <section id="contact" class="py-20 px-4 sm:px-6 lg:px-8 relative" style="background-color:var(--bg-mid)">
+        <div class="absolute top-0 left-0 right-0 h-1 hazard opacity-50"></div>
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <div class="section-label justify-center mb-4">Get In Touch</div>
+                <h2 class="text-5xl md:text-6xl gradient-text">CONTACT US</h2>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 grid md:grid-cols-2 gap-8">
+                    <div class="space-y-8" data-aos="fade-right">
+                        <div>
+                            <div class="flex justify-center mb-4">
+                                <img src="images/aboutuslogo.png" alt="URRT Logo" class="h-20 w-20 rounded-full" style="border:2px solid var(--amber)">
+                            </div>
+                            <h3 class="text-3xl gradient-text mb-4">ABOUT URRT</h3>
+                            <p style="color:var(--muted)" class="leading-relaxed">The UIU Rescue Rover Team (URRT) is a group of passionate students dedicated to designing and building advanced rescue rovers for disaster response and emergency operations. Our mission is to leverage engineering innovation and autonomous technologies to assist in search, Rescue, and Life-saving missions, pushing the boundaries of robotics for humanitarian impact.</p>
+                        </div>
+                        <div class="space-y-5">
+                            <div class="flex items-start gap-4 group cursor-pointer">
+                                <div class="p-3 flex items-center justify-center transition-all duration-300 group-hover:scale-110" style="background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3)">
+                                    <i class="fas fa-envelope" style="color:var(--amber)"></i>
+                                </div>
+                                <div>
+                                    <h4 class="condensed font-bold tracking-wide text-white">EMAIL</h4>
+                                    <p class="mono text-sm" style="color:var(--muted)">rescuerover@cair.uiu.ac.bd</p>
+                                    <p class="mono text-xs mt-1" style="color:var(--muted-dim)">We'll respond within 24 hours</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4 group cursor-pointer">
+                                <div class="p-3 flex items-center justify-center transition-all duration-300 group-hover:scale-110" style="background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3)">
+                                    <i class="fas fa-phone" style="color:var(--amber)"></i>
+                                </div>
+                                <div>
+                                    <h4 class="condensed font-bold tracking-wide text-white">PHONE</h4>
+                                    <p class="mono text-sm" style="color:var(--muted)">+880 1909356346</p>
+                                    <p class="mono text-xs mt-1" style="color:var(--muted-dim)">Mon-Fri, 9AM-5PM</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4 group cursor-pointer">
+                                <div class="p-3 flex items-center justify-center transition-all duration-300 group-hover:scale-110" style="background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3)">
+                                    <i class="fas fa-map-marker-alt" style="color:var(--amber)"></i>
+                                </div>
+                                <div>
+                                    <h4 class="condensed font-bold tracking-wide text-white">ADDRESS</h4>
+                                    <p class="mono text-sm" style="color:var(--muted)">United International University</p>
+                                    <p class="mono text-xs mt-1" style="color:var(--muted-dim)">Dhaka, Bangladesh</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="condensed font-bold tracking-widest mb-4 text-white">FOLLOW OUR JOURNEY</h4>
+                            <div class="flex gap-3">
+                                <a href="https://www.facebook.com/share/1FaSe57Vd5/" class="social-icon"><i class="fab fa-facebook-f" style="color:var(--amber)"></i></a>
+                                <a href="https://www.instagram.com/uiurescuerover?igsh=MTVjeTY1cW9xeXV3aw==" class="social-icon"><i class="fab fa-instagram" style="color:var(--amber)"></i></a>
+                                <a href="#" class="social-icon"><i class="fab fa-linkedin-in" style="color:var(--amber)"></i></a>
+                                <a href="#" class="social-icon"><i class="fab fa-youtube" style="color:var(--amber)"></i></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div data-aos="fade-left">
+                        <div class="panel p-5">
+                            <h3 class="condensed text-xl font-bold tracking-wide text-white mb-4">VISIT OUR CAMPUS</h3>
+                            <div class="map-container mb-4">
+                                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3650.598346556767!2d90.42461497504862!3d23.79810607863617!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c7b33c7b87cd%3A0x8c3881b66eeb7e0c!2sUnited%20International%20University!5e0!3m2!1sen!2sbd!4v1700000000000!5m2!1sen!2sbd" width="100%" height="100%" style="border:0;filter:brightness(0.85) contrast(1.1)" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex items-center gap-2 mono text-xs" style="color:var(--muted)"><i data-feather="navigation" class="w-3 h-3" style="color:var(--amber)"></i> United City, Madani Avenue, Badda, Dhaka 1212</div>
+                                <div class="flex items-center gap-2 mono text-xs" style="color:var(--muted)"><i data-feather="clock" class="w-3 h-3" style="color:var(--amber)"></i> Open: Sunday–Thursday, 8:00 AM – 8:00 PM</div>
+                                <div class="flex items-center gap-2 mono text-xs" style="color:var(--muted)"><i data-feather="building" class="w-3 h-3" style="color:var(--amber)"></i> CAIR Lab: 4th Floor, Academic Building</div>
+                            </div>
+                            <a href="https://maps.app.goo.gl/CwgAxRgJQgHv7Vjq8" target="_blank" class="btn-primary block text-center text-sm mt-4 no-underline">
+                                Open in Google Maps
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div data-aos="fade-up">
+                    <div class="panel p-8">
+                        <h3 class="text-3xl gradient-text mb-6">SEND A MESSAGE</h3>
+                        <form class="space-y-5" id="contact-form">
+                            <div>
+                                <label class="condensed font-semibold text-sm tracking-wider block mb-2" style="color:var(--muted)">FULL NAME</label>
+                                <input type="text" id="contact-name" class="contact-form-input" placeholder="Enter your name" required>
+                            </div>
+                            <div>
+                                <label class="condensed font-semibold text-sm tracking-wider block mb-2" style="color:var(--muted)">EMAIL ADDRESS</label>
+                                <input type="email" id="contact-email" class="contact-form-input" placeholder="your.email@example.com" required>
+                            </div>
+                            <div>
+                                <label class="condensed font-semibold text-sm tracking-wider block mb-2" style="color:var(--muted)">SUBJECT</label>
+                                <select id="contact-subject" class="contact-form-input appearance-none" required>
+                                    <option value="">Select a subject</option>
+                                    <option value="Team Inquiry">Team Inquiry</option>
+                                    <option value="Collaboration">Collaboration</option>
+                                    <option value="Sponsorship">Sponsorship</option>
+                                    <option value="Recruitment">Recruitment</option>
+                                    <option value="Technical Inquiry">Technical Inquiry</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="condensed font-semibold text-sm tracking-wider block mb-2" style="color:var(--muted)">MESSAGE</label>
+                                <textarea id="contact-message" rows="4" class="contact-form-input resize-none" placeholder="Write your message..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn-primary w-full flex items-center justify-center gap-2 text-sm">
+                                Send Message <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- WEBMASTER -->
+    <div class="webmaster-container" data-aos="fade-up">
+        <a href="webmaster.html" class="webmaster-btn-3d">
+            <i class="fas fa-code"></i>
+            <span class="condensed font-bold tracking-widest">OUR WEBMASTERS</span>
+        </a>
+    </div>
+
+    <!-- FOOTER -->
+    <footer style="background:var(--bg-deep);border-top:1px solid var(--steel-light)" class="py-8 px-4 sm:px-6 lg:px-8">
+        <div class="hazard h-1 mb-8 opacity-60"></div>
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex gap-5">
+                    <a href="https://www.facebook.com/share/1FaSe57Vd5/" style="color:var(--muted)" class="hover:text-amber-400 transition-colors" onmouseover="this.style.color='var(--amber)'" onmouseout="this.style.color='var(--muted)'"><i data-feather="facebook" class="w-5 h-5"></i></a>
+                    <a href="https://www.instagram.com/uiurescuerover?igsh=MTVjeTY1cW9xeXV3aw==" style="color:var(--muted)" class="transition-colors" onmouseover="this.style.color='var(--amber)'" onmouseout="this.style.color='var(--muted)'"><i data-feather="instagram" class="w-5 h-5"></i></a>
+                    <a href="#" style="color:var(--muted)" class="transition-colors" onmouseover="this.style.color='var(--amber)'" onmouseout="this.style.color='var(--muted)'"><i data-feather="linkedin" class="w-5 h-5"></i></a>
+                    <a href="#" style="color:var(--muted)" class="transition-colors" onmouseover="this.style.color='var(--amber)'" onmouseout="this.style.color='var(--muted)'"><i data-feather="youtube" class="w-5 h-5"></i></a>
+                </div>
+                <p class="mono text-xs" style="color:var(--muted-dim)">&copy; 2026 URRT – UIU Rescue Rover Team. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+</div><!-- end main-content -->
+
+
+<!-- ================================================
+     SCRIPTS — everything lives in this one block
+     ================================================ -->
+<script>
+document.addEventListener("DOMContentLoaded", function () { initializeWebsite(); });
+
+function initializeWebsite() {
+    if (typeof AOS !== 'undefined') AOS.init({ duration: 800, easing: 'ease-in-out', once: true });
+    if (typeof feather !== 'undefined') feather.replace();
+
+    // Mobile menu
+    const mb = document.getElementById('mobile-menu-button');
+    if (mb) mb.addEventListener('click', () => document.getElementById('mobile-menu').classList.toggle('hidden'));
+
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            const sel = this.getAttribute('href');
+            if (sel === '#') return;
+            e.preventDefault();
+            const t = document.querySelector(sel);
+            if (t) {
+                window.scrollTo({ top: t.offsetTop - 64, behavior: 'smooth' });
+                document.getElementById('mobile-menu').classList.add('hidden');
+            }
+        });
+    });
+
+    // Contact form
+    const form = document.getElementById('contact-form');
+    if (form) {
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const name = document.getElementById('contact-name').value;
+            const email = document.getElementById('contact-email').value;
+            const subject = document.getElementById('contact-subject').value;
+            const message = document.getElementById('contact-message').value;
+            window.location.href = `mailto:rescuerover@cair.uiu.ac.bd?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`)}`;
+        });
+    }
+
+    initVisionSlideshow();
+    initAchievementLightbox();
+    initHeroCanvas();
+}
+
+/* ---------- Vision slideshow ---------- */
+/* ADD MORE IMAGES HERE: one line per image  ['path', 'alt text'] */
+const VISION_IMAGES = [
+    ['images/ho1.jpg', 'Aegis Rover'],
+    ['images/HOT6.jpeg', 'Achievement'], 
+    ['images/lm.jpg', 'Achievement'],
+    ['images/i2.jpeg', 'Achievement'],
+   
+      ['images/f1.jpg', 'Achievement'],
+    ['images/i4.jpeg', 'Achievement'],
+    ['images/ho2.jpg', 'Electronics'],
+    ['images/ho3.jpg', 'Team'],
+    ['images/ho4.jpg', 'Achievement'],
+     ['images/ho5.jpg', 'Team Photo']
+];
+
+function initVisionSlideshow() {
+    const INTERVAL = 2000;
+    let current = 0, timer;
+    const slidesEl = document.getElementById('vision-slides');
+    const dotsEl = document.getElementById('vision-dots');
+    const progressEl = document.getElementById('vision-progress');
+    if (!slidesEl || !dotsEl) return;
+    const TOTAL = VISION_IMAGES.length;
+
+    slidesEl.innerHTML = VISION_IMAGES.map(([src, alt]) =>
+        `<div style="min-width:100%;height:360px;position:relative">
+            <img src="${src}" alt="${alt}" style="width:100%;height:100%;object-fit:cover;display:block">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(13,13,13,0.75) 0%,transparent 55%)"></div>
+        </div>`).join('');
+    dotsEl.innerHTML = VISION_IMAGES.map((_, i) =>
+        `<div class="vision-dot" data-i="${i}" style="width:28px;height:3px;background:var(--steel-light);cursor:pointer;transition:all .3s"></div>`).join('');
+    dotsEl.style.flexWrap = 'wrap';
+    const dots = dotsEl.querySelectorAll('.vision-dot');
+
+    function goTo(n) {
+        current = n;
+        slidesEl.style.transform = `translateX(-${current * 100}%)`;
+        dots.forEach((d, i) => {
+            d.style.background = i === current ? 'var(--amber)' : 'var(--steel-light)';
+            d.style.width = i === current ? '44px' : '28px';
+        });
+        progressEl.style.transition = 'none';
+        progressEl.style.width = '0%';
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+            progressEl.style.transition = `width ${INTERVAL}ms linear`;
+            progressEl.style.width = '100%';
+        }));
+    }
+    function startTimer() { timer = setInterval(() => goTo((current + 1) % TOTAL), INTERVAL); }
+    dots.forEach(d => d.addEventListener('click', () => { goTo(parseInt(d.dataset.i)); clearInterval(timer); startTimer(); }));
+    goTo(0);
+    startTimer();
+}
+
+/* ---------- Achievement lightbox ---------- */
+function initAchievementLightbox() {
+    const dlg = document.getElementById('ach-dialog');
+    const img = document.getElementById('ach-dialog-img');
+    if (!dlg || !dlg.showModal) return;
+    document.querySelectorAll('.ach-zoom').forEach(btn => {
+        btn.addEventListener('click', () => { img.src = btn.dataset.src; dlg.showModal(); });
+    });
+    dlg.addEventListener('click', () => dlg.close());
+}
+
+/* ---------- Interactive rescue-rover hero (canvas) ---------- */
+function initHeroCanvas() {
+    const sec = document.getElementById('hero-fx');
+    const c = document.getElementById('hero-canvas');
+    if (!sec || !c) return;
+    const ctx = c.getContext('2d');
+    const RED = '#ff0400', YEL = '#ffbf00';
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let W, H, dpr, s, rx, ry, gy, t = 0, phase = 0, grip = 0, gripT = 0, running = true;
+    const m = { x: 0, y: 0, tx: 0, ty: 0, on: false };
+    let layers = [], embers = [];
+
+    function rng(seed) { return () => (seed = (seed * 16807) % 2147483647) / 2147483647; }
+
+    function makeLayer(hMax, seed) {
+        const r = rng(seed), out = [];
+        let x = -60;
+        while (x < W + 200) {
+            const w = 60 + r() * 120, h = hMax * (0.35 + r() * 0.65), k = 4 + Math.floor(r() * 4), pts = [];
+            for (let i = 0; i <= k; i++) {
+                let ph = h * (i % 2 ? 0.7 + r() * 0.3 : 0.9 + r() * 0.1);
+                if (r() < 0.2) ph *= 0.6;
+                pts.push([x + w * i / k, ph]);
+            }
+            const win = Array.from({ length: Math.floor(r() * 6) }, () => [x + 8 + r() * (w - 16), r() * h * 0.75, r()]);
+            out.push({ x, w, pts, win });
+            x += w * 0.8;
+        }
+        return out;
+    }
+
+    function resize() {
+        const r = sec.getBoundingClientRect();
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        W = r.width; H = r.height;
+        c.width = W * dpr; c.height = H * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        gy = H * 0.9;
+        s = W < 800 ? W / 520 : Math.min(W / 1300, H / 760);
+        rx = W < 800 ? W * 0.5 : W * 0.76;
+        ry = H * 0.93;
+        layers = [makeLayer(H * 0.55, 7), makeLayer(H * 0.4, 21)];
+        embers = Array.from({ length: Math.round(W / 14) }, () => ({
+            x: Math.random() * W, y: Math.random() * H,
+            vx: (Math.random() - 0.5) * 0.3, vy: -(0.2 + Math.random() * 0.8),
+            r: 0.8 + Math.random() * 2, p: Math.random() * 6.28, a: 0.3 + Math.random() * 0.7
+        }));
+        if (!m.on) { m.x = m.tx = W * 0.55; m.y = m.ty = H * 0.4; }
+    }
+
+    function rr(x, y, w, h, r) {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.arcTo(x + w, y, x + w, y + h, r);
+        ctx.arcTo(x + w, y + h, x, y + h, r);
+        ctx.arcTo(x, y + h, x, y, r);
+        ctx.arcTo(x, y, x + w, y, r);
+        ctx.closePath();
+    }
+
+    function drawLayer(L, color, off, glow) {
+        ctx.fillStyle = color;
+        L.forEach(b => {
+            ctx.beginPath();
+            ctx.moveTo(b.x + off, gy);
+            b.pts.forEach(p => ctx.lineTo(p[0] + off, gy - p[1]));
+            ctx.lineTo(b.x + b.w + off, gy);
+            ctx.closePath();
+            ctx.fill();
+            b.win.forEach(w => {
+                const f = 0.4 + 0.6 * Math.abs(Math.sin(t * 2 + w[2] * 20));
+                ctx.fillStyle = `rgba(255,${90 + w[2] * 90 | 0},0,${glow * f})`;
+                ctx.fillRect(w[0] + off, gy - w[1], 3, 4);
+            });
+            ctx.fillStyle = color;
+        });
+    }
+
+    /* =================================================================
+       ROVER — matches the real URRT rover photo:
+       black carbon body, 4 flipper tracks, perforated front panel + LED
+       light, 4 copper rods at the rear, silver 2-link arm with black
+       joint motors and a clamp gripper.
+       ================================================================= */
+    function stadiumPath(x1, y1, x2, y2, r) {
+        const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy);
+        const ux = dx / L, uy = dy / L, nx = uy, ny = -ux;
+        const a0 = Math.atan2(ny, nx);
+        ctx.beginPath();
+        ctx.moveTo(x1 + nx * r, y1 + ny * r);
+        ctx.lineTo(x2 + nx * r, y2 + ny * r);
+        ctx.arc(x2, y2, r, a0, a0 + Math.PI);
+        ctx.lineTo(x1 - nx * r, y1 - ny * r);
+        ctx.arc(x1, y1, r, a0 + Math.PI, a0 + 2 * Math.PI);
+        ctx.closePath();
+    }
+
+    /* chunky rubber track with moving links */
+    function trackLoop(x1, y1, x2, y2, r, shift, dim) {
+        const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy);
+        const ux = dx / L, uy = dy / L, nx = uy, ny = -ux;
+        const P = 2 * L + 2 * Math.PI * r, cnt = Math.floor(P / 15), step = P / cnt;
+        const off = ((shift % step) + step) % step;
+
+        stadiumPath(x1, y1, x2, y2, r);
+        ctx.fillStyle = dim ? '#060606' : '#0a0a0a';
+        ctx.strokeStyle = dim ? '#1a1a1a' : '#2e2e2e';
+        ctx.lineWidth = 2; ctx.fill(); ctx.stroke();
+
+        for (let i = 0; i < cnt; i++) {
+            const sd = (i * step + off) % P;
+            let px, py, qx, qy;
+            if (sd < L) {
+                px = x1 + ux * sd + nx * r; py = y1 + uy * sd + ny * r; qx = nx; qy = ny;
+            } else if (sd < L + Math.PI * r) {
+                const th = (sd - L) / r;
+                qx = nx * Math.cos(th) + ux * Math.sin(th);
+                qy = ny * Math.cos(th) + uy * Math.sin(th);
+                px = x2 + qx * r; py = y2 + qy * r;
+            } else if (sd < 2 * L + Math.PI * r) {
+                const q = sd - L - Math.PI * r;
+                px = x2 - ux * q - nx * r; py = y2 - uy * q - ny * r; qx = -nx; qy = -ny;
+            } else {
+                const th = (sd - 2 * L - Math.PI * r) / r;
+                qx = -nx * Math.cos(th) - ux * Math.sin(th);
+                qy = -ny * Math.cos(th) - uy * Math.sin(th);
+                px = x1 + qx * r; py = y1 + qy * r;
+            }
+            ctx.save();
+            ctx.translate(px, py); ctx.rotate(Math.atan2(qy, qx));
+            ctx.fillStyle = dim ? '#101010' : '#1c1c1c';
+            ctx.fillRect(-3, -5.5, 10, 11);
+            if (!dim) { ctx.fillStyle = '#3c3c3c'; ctx.fillRect(5, -5.5, 2, 11); }
+            ctx.restore();
+        }
+    }
+
+    /* carbon-fibre side plate that sits inside the track */
+    function sidePlate(x1, y1, x2, y2, r) {
+        ctx.save();
+        stadiumPath(x1, y1, x2, y2, r);
+        const g = ctx.createLinearGradient(0, y1 - r, 0, y1 + r);
+        g.addColorStop(0, '#1d1d1d'); g.addColorStop(1, '#0b0b0b');
+        ctx.fillStyle = g; ctx.fill();
+        ctx.clip();
+        ctx.strokeStyle = 'rgba(255,255,255,0.045)'; ctx.lineWidth = 1;
+        ctx.beginPath();
+        const xa = Math.min(x1, x2) - r, xb = Math.max(x1, x2) + r;
+        for (let x = xa - 80; x < xb; x += 6) { ctx.moveTo(x, y1 + r); ctx.lineTo(x + 80, y1 - r - 40); }
+        ctx.stroke();
+        ctx.restore();
+        stadiumPath(x1, y1, x2, y2, r);
+        ctx.strokeStyle = '#303030'; ctx.lineWidth = 2; ctx.stroke();
+    }
+
+    /* silver hex hub (flipper end / front sprocket) */
+    function hexHub(x, y, r, rot) {
+        ctx.beginPath();
+        for (let i = 0; i < 6; i++) {
+            const a = rot + i * Math.PI / 3;
+            ctx.lineTo(x + Math.cos(a) * r, y + Math.sin(a) * r);
+        }
+        ctx.closePath();
+        ctx.fillStyle = '#8f8f8f'; ctx.strokeStyle = '#2a2a2a'; ctx.lineWidth = 2; ctx.fill(); ctx.stroke();
+        ctx.fillStyle = '#5b5b5b';
+        ctx.beginPath(); ctx.arc(x, y, r * 0.55, 0, 6.283); ctx.fill();
+        ctx.fillStyle = '#cfcfcf';
+        ctx.fillRect(x - r * 0.22, y - r * 0.22, r * 0.44, r * 0.44);
+    }
+
+    /* big drive sprocket with bronze bearing ring */
+    function driveHub(x, y, r) {
+        ctx.fillStyle = '#151515'; ctx.strokeStyle = '#7a7a7a'; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.arc(x, y, r, 0, 6.283); ctx.fill(); ctx.stroke();
+        ctx.strokeStyle = '#b07a3a'; ctx.lineWidth = 5;
+        ctx.beginPath(); ctx.arc(x, y, r * 0.6, 0, 6.283); ctx.stroke();
+        ctx.fillStyle = '#2b2b2b';
+        ctx.beginPath(); ctx.arc(x, y, r * 0.32, 0, 6.283); ctx.fill();
+        ctx.strokeStyle = '#999'; ctx.lineWidth = 2;
+        for (let k = 0; k < 3; k++) {
+            const a = phase * 0.05 + k * 2.094;
+            ctx.beginPath(); ctx.moveTo(x, y);
+            ctx.lineTo(x + Math.cos(a) * r * 0.9, y + Math.sin(a) * r * 0.9); ctx.stroke();
+        }
+    }
+
+    /* silver square aluminium tube */
+    function tube(x1, y1, x2, y2, w) {
+        const len = Math.hypot(x2 - x1, y2 - y1), ang = Math.atan2(y2 - y1, x2 - x1);
+        ctx.save();
+        ctx.translate(x1, y1); ctx.rotate(ang);
+        const g = ctx.createLinearGradient(0, -w / 2, 0, w / 2);
+        g.addColorStop(0, '#dcdcdc'); g.addColorStop(0.3, '#f7f7f7');
+        g.addColorStop(0.7, '#8c8c8c'); g.addColorStop(1, '#505050');
+        ctx.fillStyle = g; ctx.strokeStyle = '#1a1a1a'; ctx.lineWidth = 1.5;
+        rr(0, -w / 2, len, w, 3); ctx.fill(); ctx.stroke();
+        ctx.strokeStyle = 'rgba(0,0,0,0.35)'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(14, 0); ctx.lineTo(len - 14, 0); ctx.stroke();
+        ctx.restore();
+    }
+
+    /* black joint motor with copper ring + bolts */
+    function motor(x, y, r) {
+        ctx.fillStyle = '#0c0c0c'; ctx.strokeStyle = '#5c5c5c'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(x, y, r, 0, 6.283); ctx.fill(); ctx.stroke();
+        ctx.strokeStyle = '#b87333'; ctx.lineWidth = 2.5;
+        ctx.beginPath(); ctx.arc(x, y, r * 0.62, 0, 6.283); ctx.stroke();
+        ctx.fillStyle = '#a5a5a5';
+        for (let k = 0; k < 8; k++) {
+            const a = k * Math.PI / 4;
+            ctx.beginPath(); ctx.arc(x + Math.cos(a) * r * 0.84, y + Math.sin(a) * r * 0.84, 1.5, 0, 6.283); ctx.fill();
+        }
+        ctx.fillStyle = '#2a2a2a';
+        ctx.beginPath(); ctx.arc(x, y, r * 0.28, 0, 6.283); ctx.fill();
+    }
+
+    function cable(x1, y1, x2, y2, bow, col) {
+        const mx = (x1 + x2) / 2, my = (y1 + y2) / 2, dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy) || 1;
+        ctx.strokeStyle = col; ctx.lineWidth = 2.2; ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.moveTo(x1, y1);
+        ctx.quadraticCurveTo(mx + (dy / L) * bow, my - (dx / L) * bow, x2, y2);
+        ctx.stroke();
+    }
+
+    function drawRover() {
+        ctx.save();
+        ctx.translate(rx, ry); ctx.scale(s, s);
+        const lx = (m.x - rx) / s, ly = (m.y - ry) / s;
+
+        /* ---- geometry ---- */
+        const P1 = [-95, -40], P2 = [135, -40];              // main track sprocket centres
+        const FL = 125, fa = 0.08 - grip * 0.45;             // flipper length / angle (lifts on click)
+        const FE = [P1[0] - Math.cos(fa) * FL, P1[1] + Math.sin(fa) * FL];
+        const RL = 105, ra = 0.38 + grip * 0.2;              // rear flipper length / upward tilt
+        const RE = [P2[0] + Math.cos(ra) * RL, P2[1] - Math.sin(ra) * RL];
+        const OX = 22, OY = -18;                             // far-side track offset (3/4 depth)
+
+        /* ground shadow */
+        ctx.fillStyle = 'rgba(0,0,0,0.55)';
+        ctx.beginPath(); ctx.ellipse(-10, 4, 250, 11, 0, 0, 6.283); ctx.fill();
+
+        /* ---- far-side tracks ---- */
+        trackLoop(P1[0] + OX, P1[1] + OY, P2[0] + OX, P2[1] + OY, 40, phase, true);
+        trackLoop(P1[0] + OX, P1[1] + OY, FE[0] + OX, FE[1] + OY, 30, phase, true);
+        trackLoop(P2[0] + OX, P2[1] + OY, RE[0] + OX, RE[1] + OY, 30, phase, true);
+
+        /* ---- body ---- */
+        const body = () => {
+            ctx.beginPath();
+            ctx.moveTo(-135, -72); ctx.lineTo(-135, -108); ctx.lineTo(-100, -146);
+            ctx.lineTo(138, -146); ctx.lineTo(166, -128); ctx.lineTo(166, -72);
+            ctx.closePath();
+        };
+        body();
+        let g = ctx.createLinearGradient(0, -146, 0, -72);
+        g.addColorStop(0, '#242424'); g.addColorStop(1, '#090909');
+        ctx.fillStyle = g; ctx.fill();
+        ctx.save(); body(); ctx.clip();
+        ctx.strokeStyle = 'rgba(255,255,255,0.04)'; ctx.lineWidth = 1; ctx.beginPath();     // carbon weave
+        for (let x = -200; x < 200; x += 6) { ctx.moveTo(x, -70); ctx.lineTo(x + 80, -150); }
+        ctx.stroke();
+        ctx.fillStyle = '#2b2b2b'; ctx.fillRect(-110, -148, 250, 7);                         // top plate edge
+        ctx.fillStyle = '#4a4a4a';                                                           // perforated front panel
+        for (let i = 0; i < 11; i++) for (let j = 0; j < 8; j++) ctx.fillRect(-126 + i * 6, -132 + j * 6, 1.6, 1.6);
+        ctx.strokeStyle = '#050505'; ctx.lineWidth = 2; ctx.beginPath();                     // panel seams
+        ctx.moveTo(-50, -146); ctx.lineTo(-50, -72); ctx.moveTo(70, -146); ctx.lineTo(70, -72); ctx.stroke();
+        ctx.restore();
+        body(); ctx.strokeStyle = '#3a3a3a'; ctx.lineWidth = 2; ctx.stroke();
+        ctx.fillStyle = Math.sin(t * 6) > 0 ? RED : '#400';                                  // status LED
+        ctx.beginPath(); ctx.arc(150, -118, 3.5, 0, 6.283); ctx.fill();
+
+        /* LED light panel */
+        ctx.fillStyle = '#0a0a0a'; ctx.strokeStyle = '#777'; ctx.lineWidth = 2;
+        rr(-92, -118, 46, 24, 3); ctx.fill(); ctx.stroke();
+        ctx.save(); ctx.fillStyle = '#ffffff'; ctx.shadowColor = '#fff2c4'; ctx.shadowBlur = 14;
+        for (let i = 0; i < 4; i++) for (let j = 0; j < 2; j++) ctx.fillRect(-87 + i * 10, -113 + j * 10, 7, 7);
+        ctx.restore();
+
+        /* ---- rear copper rods ---- */
+        [112, 128, 144, 160].forEach(x => {
+            ctx.lineCap = 'butt';
+            ctx.strokeStyle = '#7d4f2c'; ctx.lineWidth = 3.2;
+            ctx.beginPath(); ctx.moveTo(x, -146); ctx.lineTo(x, -252); ctx.stroke();
+            ctx.strokeStyle = '#d6a070'; ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.moveTo(x - 0.8, -146); ctx.lineTo(x - 0.8, -252); ctx.stroke();
+        });
+        [-252, -206].forEach(yb => {
+            ctx.fillStyle = '#111'; ctx.strokeStyle = '#4a4a4a'; ctx.lineWidth = 1.5;
+            rr(104, yb - 4, 64, 8, 2); ctx.fill(); ctx.stroke();
+            ctx.fillStyle = '#6a6a6a';
+            [112, 128, 144, 160].forEach(x => { ctx.beginPath(); ctx.arc(x, yb, 2, 0, 6.283); ctx.fill(); });
+        });
+
+        /* ---- near-side main track ---- */
+        trackLoop(P1[0], P1[1], P2[0], P2[1], 40, phase, false);
+        sidePlate(P1[0], P1[1], P2[0], P2[1], 31);
+        hexHub(P1[0], P1[1], 15, phase * 0.02);
+        driveHub(15, -40, 13);
+
+        /* ---- near-side rear flipper (tilts upward) ---- */
+        trackLoop(P2[0], P2[1], RE[0], RE[1], 30, phase, false);
+        sidePlate(P2[0], P2[1], RE[0], RE[1], 21);
+        hexHub(RE[0], RE[1], 17, 0);
+        driveHub(P2[0], P2[1], 24);
+
+        /* ---- near-side front flipper ---- */
+        trackLoop(P1[0], P1[1], FE[0], FE[1], 30, phase, false);
+        sidePlate(P1[0], P1[1], FE[0], FE[1], 21);
+        hexHub(FE[0], FE[1], 17, 0);
+        hexHub(P1[0], P1[1], 12, phase * 0.02);
+
+        /* ---- searchlight beam from the LED panel ---- */
+        const hx = -92, hy = -106;
+        const ba = Math.atan2(ly - hy, lx - hx);
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        const bg = ctx.createRadialGradient(hx, hy, 0, hx, hy, 950);
+        bg.addColorStop(0, 'rgba(255,230,170,0.5)'); bg.addColorStop(1, 'rgba(255,230,170,0)');
+        ctx.fillStyle = bg; ctx.beginPath(); ctx.moveTo(hx, hy);
+        ctx.arc(hx, hy, 950, ba - 0.13, ba + 0.13); ctx.closePath(); ctx.fill();
+        ctx.restore();
+
+        /* ---- turret + 2-link IK arm ---- */
+        const bx = -25, by = -178, L1 = 170, L2 = 150;
+        ctx.fillStyle = '#9a9a9a'; ctx.strokeStyle = '#333'; ctx.lineWidth = 1.5;     // swivel bearing
+        rr(bx - 34, -152, 68, 8, 3); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = '#111'; ctx.strokeStyle = '#666'; ctx.lineWidth = 2;
+        rr(bx - 24, -172, 48, 22, 4); ctx.fill(); ctx.stroke();
+
+        const dx = lx - bx, dy = ly - by, d = Math.hypot(dx, dy), a = Math.atan2(dy, dx);
+        const reach = Math.max(Math.abs(L1 - L2) + 10, Math.min(L1 + L2 - 2, d - 60));
+        const sgn = dx >= 0 ? -1 : 1;
+        const cosv = Math.max(-1, Math.min(1, (L1 * L1 + reach * reach - L2 * L2) / (2 * L1 * reach)));
+        const th = a + sgn * Math.acos(cosv);
+        const ex = bx + L1 * Math.cos(th), ey = by + L1 * Math.sin(th);
+        const wx = bx + reach * Math.cos(a), wy = by + reach * Math.sin(a);
+
+        tube(bx, by, ex, ey, 20);
+        tube(ex, ey, wx, wy, 16);
+        cable(bx + 10, by + 12, ex, ey + 6, 14, '#222');
+        cable(ex, ey - 6, wx, wy - 6, -16, '#d98c1f');
+        cable(ex, ey - 4, wx, wy - 4, -12, '#2fa84f');
+        motor(bx, by, 24);
+        motor(ex, ey, 21);
+        motor(wx, wy, 17);
+
+        /* gripper (clamp) */
+        const open = 0.08 + 0.5 * (1 - grip);
+        ctx.save();
+        ctx.translate(wx, wy); ctx.rotate(a);
+        ctx.fillStyle = '#141414'; ctx.strokeStyle = '#666'; ctx.lineWidth = 2;
+        rr(8, -11, 26, 22, 4); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = '#9a9a9a';
+        ctx.beginPath(); ctx.arc(16, -5, 1.6, 0, 6.283); ctx.arc(16, 5, 1.6, 0, 6.283); ctx.fill();
+        [-1, 1].forEach(sg => {
+            ctx.save();
+            ctx.translate(34, 0); ctx.rotate(sg * open); ctx.scale(1, sg);
+            ctx.fillStyle = '#101010'; ctx.strokeStyle = '#8a8a8a'; ctx.lineWidth = 1.8;
+            ctx.beginPath();
+            ctx.moveTo(0, 1); ctx.lineTo(0, 11); ctx.lineTo(22, 11);
+            ctx.lineTo(32, 3); ctx.lineTo(32, 0); ctx.lineTo(20, 5); ctx.closePath();
+            ctx.fill(); ctx.stroke();
+            ctx.restore();
+        });
+        ctx.restore();
+
+        ctx.restore();
+    }
+
+    function drawHUD() {
+        for (let i = 0; i < 3; i++) {
+            const p = (t * 0.5 + i / 3) % 1;
+            ctx.strokeStyle = `rgba(255,191,0,${(1 - p) * 0.5})`; ctx.lineWidth = 1.5;
+            ctx.beginPath(); ctx.arc(m.x, m.y, p * 110, 0, 6.283); ctx.stroke();
+        }
+        const sa = t * 3;
+        ctx.lineWidth = 1.5;
+        for (let i = 0; i < 14; i++) {
+            ctx.strokeStyle = `rgba(255,191,0,${0.35 * (1 - i / 14)})`;
+            ctx.beginPath(); ctx.moveTo(m.x, m.y);
+            ctx.lineTo(m.x + Math.cos(sa - i * 0.05) * 90, m.y + Math.sin(sa - i * 0.05) * 90);
+            ctx.stroke();
+        }
+        const b = 26 + Math.sin(t * 4) * 3, k = 10;
+        ctx.strokeStyle = RED; ctx.lineWidth = 2;
+        [[-1, -1], [1, -1], [1, 1], [-1, 1]].forEach(([sx, sy]) => {
+            ctx.beginPath();
+            ctx.moveTo(m.x + sx * b, m.y + sy * (b - k));
+            ctx.lineTo(m.x + sx * b, m.y + sy * b);
+            ctx.lineTo(m.x + sx * (b - k), m.y + sy * b);
+            ctx.stroke();
+        });
+        ctx.font = '11px "Space Mono", monospace';
+        ctx.fillStyle = YEL;
+        const sig = 82 + Math.sin(t * 2) * 9 | 0;
+        ctx.fillText('TARGET LOCK  X:' + (m.x | 0) + ' Y:' + (m.y | 0), m.x + b + 10, m.y - b + 4);
+        ctx.fillStyle = '#ff8a6b';
+        ctx.fillText('VICTIM SIGNAL ' + sig + '%', m.x + b + 10, m.y - b + 18);
+    }
+
+    function frame(now) {
+        if (!running) return;
+        t = now / 1000;
+        if (!m.on) {
+            m.tx = W * 0.5 + Math.cos(t * 0.6) * W * 0.28;
+            m.ty = H * 0.42 + Math.sin(t * 0.9) * H * 0.12;
+        }
+        const px = m.x;
+        m.x += (m.tx - m.x) * 0.12; m.y += (m.ty - m.y) * 0.12;
+        phase += (m.x - px) * 0.8;
+        grip += (gripT - grip) * 0.2;
+        const par = m.x / W - 0.5;
+
+        ctx.clearRect(0, 0, W, H);
+        let g = ctx.createLinearGradient(0, 0, 0, H);
+        g.addColorStop(0, '#050505'); g.addColorStop(0.6, '#140805'); g.addColorStop(1, '#2a0d03');
+        ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+
+        [[W * 0.12, 1], [W * 0.9, 1.15]].forEach(([x, k], i) => {
+            const f = 0.85 + Math.sin(t * 5 + i * 2) * 0.08 + Math.random() * 0.06, cx = x - par * 30;
+            const rg = ctx.createRadialGradient(cx, gy, 0, cx, gy, H * 0.75 * k);
+            rg.addColorStop(0, `rgba(255,98,0,${0.5 * f})`);
+            rg.addColorStop(1, 'rgba(255,98,0,0)');
+            ctx.fillStyle = rg; ctx.fillRect(0, 0, W, H);
+        });
+
+        drawLayer(layers[0], '#0a0705', par * -16, 0.5);
+
+        ctx.strokeStyle = 'rgba(255,98,0,0.07)'; ctx.lineWidth = 1;
+        const gx = (par * -40) % 60, gyo = ((m.y / H - 0.5) * -20) % 60;
+        ctx.beginPath();
+        for (let x = gx; x < W; x += 60) { ctx.moveTo(x, 0); ctx.lineTo(x, H); }
+        for (let y = gyo; y < H; y += 60) { ctx.moveTo(0, y); ctx.lineTo(W, y); }
+        ctx.stroke();
+
+        drawLayer(layers[1], '#050403', par * -34, 0.9);
+
+        g = ctx.createLinearGradient(0, gy, 0, H);
+        g.addColorStop(0, '#1a0a04'); g.addColorStop(1, '#050505');
+        ctx.fillStyle = g; ctx.fillRect(0, gy, W, H - gy);
+        ctx.fillStyle = 'rgba(255,98,0,0.5)'; ctx.fillRect(0, gy, W, 1.5);
+
+        ctx.save(); ctx.globalCompositeOperation = 'lighter';
+        embers.forEach(e => {
+            const ddx = e.x - m.x, ddy = e.y - m.y, dist = Math.hypot(ddx, ddy);
+            if (dist < 150 && dist > 0.1) {
+                const f = (150 - dist) / 150 * 3;
+                e.x += ddx / dist * f; e.y += ddy / dist * f;
+            }
+            e.x += e.vx + Math.sin(t + e.p) * 0.3; e.y += e.vy;
+            if (e.y < -10) { e.y = H + 10; e.x = Math.random() * W; }
+            if (e.x < -10) e.x = W + 10;
+            if (e.x > W + 10) e.x = -10;
+            ctx.fillStyle = `rgba(255,${110 + Math.sin(e.p + t) * 50 | 0},0,${e.a * 0.8})`;
+            ctx.beginPath(); ctx.arc(e.x, e.y, e.r, 0, 6.283); ctx.fill();
+        });
+        ctx.restore();
+
+        drawRover();
+        drawHUD();
+
+        if (!reduced) requestAnimationFrame(frame);
+    }
+
+    sec.addEventListener('pointermove', e => {
+        const r = sec.getBoundingClientRect();
+        m.tx = e.clientX - r.left; m.ty = e.clientY - r.top; m.on = true;
+    });
+    sec.addEventListener('pointerleave', () => { m.on = false; gripT = 0; });
+    sec.addEventListener('pointerdown', () => { gripT = 1; });
+    window.addEventListener('pointerup', () => { gripT = 0; });
+    window.addEventListener('resize', resize);
+
+    new IntersectionObserver(es => {
+        const vis = es[0].isIntersecting;
+        if (vis && !running) { running = true; requestAnimationFrame(frame); }
+        else if (!vis) running = false;
+    }).observe(sec);
+
+    resize();
+    requestAnimationFrame(frame);
+}
+
+
+(function () {
+    // words per section (matched by id, fallback by order for sections without an id)
+    const WORDS = {
+        'our-vision':            ['OUR VISION', 'BUILD • RESCUE • INNOVATE'],
+        'partners':              ['PARTNERS', 'SUPPORTERS'],
+        'mission-timeline':      ['MISSION TIMELINE', 'CHRONOLOGY'],
+        'robotics-competitions': ['ROBOCUP RESCUE', 'GLOBAL STAGE'],
+        'achievements':          ['ACHIEVEMENTS', 'RECOGNITIONS'],
+        'sponsor':               ['BECOME A SPONSOR', 'SUPPORT URRT'],
+        'contact':               ['CONTACT US', 'GET IN TOUCH']
+    };
+    const SPEEDS = [75, 95];            // seconds per loop for row 1 / row 2 (slow & calm)
+
+    function build(words) {
+        const layer = document.createElement('div');
+        layer.className = 'bg-marquee';
+        layer.setAttribute('aria-hidden', 'true');
+        words.forEach(function (w, i) {
+            const row = document.createElement('div');
+            row.className = 'bg-marquee__row' + (i % 2 ? ' is-reverse' : '');
+            row.style.setProperty('--bgm-speed', SPEEDS[i % SPEEDS.length] + 's');
+            // two identical halves => seamless loop at translateX(-50%)
+            const half = (w + '  •  ').repeat(4);
+            for (let k = 0; k < 2; k++) {
+                const s = document.createElement('span');
+                s.textContent = half;
+                row.appendChild(s);
+            }
+            layer.appendChild(row);
+        });
+        return layer;
+    }
+
+    function init() {
+        const root = document.getElementById('mainContent') || document.body;
+        const sections = root.querySelectorAll('section');
+        sections.forEach(function (sec, idx) {
+            let key = sec.id;
+            if (!key && sec.textContent.indexOf('PARTNERS') !== -1 && sec.className.indexOf('grid-bg') !== -1) key = 'partners';
+            const words = WORDS[key];
+            if (!words || sec.querySelector(':scope > .bg-marquee')) return;
+
+            if (getComputedStyle(sec).position === 'static') sec.style.position = 'relative';
+            sec.style.overflow = 'hidden';
+
+            // lift normal-flow children above the marquee; leave absolute ones alone
+            Array.prototype.forEach.call(sec.children, function (ch) {
+                if (getComputedStyle(ch).position === 'static') {
+                    ch.style.position = 'relative';
+                    ch.style.zIndex = '1';
+                }
+            });
+
+            const layer = build(words);
+            const first = sec.firstElementChild;
+            // keep the marquee ABOVE the hero canvas / team photo, but BELOW the overlays and content
+            const isMedia = first && (first.tagName === 'CANVAS' ||
+                (getComputedStyle(first).position === 'absolute' && first.querySelector('img')));
+            if (isMedia) first.after(layer); else sec.prepend(layer);
+        });
+    }
+
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+})();
+</script>
+</body>
+</html>

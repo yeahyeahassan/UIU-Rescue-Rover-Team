@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<link rel="icon" href="images/umrt_logo.png" type="image/x-icon">
+<title>Gallery - URRT - UIU Rescue Rover Team</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg-deep:#0d0d0d;--bg-mid:#141414;--bg-card:#1f1f1f;--steel:#2a2a2a;--steel-light:#3a3a3a;--amber:#ff0400;--amber-hot:#ff6200;--white:#fff;--muted:#d4d4d4}
+*,*::before,*::after{box-sizing:border-box}
+html{overflow-x:hidden;scroll-behavior:smooth;padding-top:env(safe-area-inset-top,0px)}
+body{font-family:'Barlow',sans-serif;background:var(--bg-deep);color:var(--white);overflow-x:hidden}
+h1,h2,h3{font-family:'Bebas Neue',sans-serif;letter-spacing:.04em;font-weight:400}
+.mono{font-family:'Space Mono',monospace}.condensed{font-family:'Barlow Condensed',sans-serif}
+.hazard{background:repeating-linear-gradient(-55deg,var(--amber) 0 10px,var(--bg-deep) 10px 22px)}
+.gradient-text{background:linear-gradient(90deg,var(--amber),var(--amber-hot));-webkit-background-clip:text;background-clip:text;color:transparent}
+.section-label{font-family:'Space Mono',monospace;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--amber);display:flex;align-items:center;gap:.75rem}
+.section-label::before{content:'';width:24px;height:1px;background:var(--amber)}
+nav.site-nav{background:rgba(13,13,13,.96);border-bottom:1px solid var(--steel-light);backdrop-filter:blur(12px)}
+.nav-link{font-family:'Barlow Condensed',sans-serif;font-size:.85rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--white);transition:color .2s}
+.nav-link:hover,.nav-link.active{color:var(--amber)}
+.btn-primary{background:var(--amber);color:var(--white);font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:.9rem 2.2rem;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);transition:background .2s}
+.btn-primary:hover{background:var(--amber-hot)}
+.grid-bg{background-image:linear-gradient(rgba(245,158,11,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(245,158,11,.04) 1px,transparent 1px);background-size:48px 48px}
+
+/* Event card */
+.event{background:var(--bg-card);border:1px solid var(--steel-light);position:relative}
+.event::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--amber),transparent);z-index:5}
+.slider{position:relative;overflow:hidden;background:#000;aspect-ratio:16/10;cursor:zoom-in}
+.track{display:flex;height:100%;transition:transform .6s cubic-bezier(.77,0,.18,1)}
+.track img{min-width:100%;height:100%;object-fit:cover;display:block}
+.slider .shade{position:absolute;inset:0;background:linear-gradient(to top,rgba(13,13,13,.6),transparent 40%);pointer-events:none}
+.arrow{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:38px;background:rgba(13,13,13,.7);border:1px solid var(--steel-light);color:#fff;display:flex;align-items:center;justify-content:center;z-index:4;cursor:pointer;opacity:0;transition:opacity .2s,border-color .2s}
+.slider:hover .arrow,.arrow:focus-visible{opacity:1}
+.arrow:hover{border-color:var(--amber);color:var(--amber)}
+.arrow.prev{left:10px}.arrow.next{right:10px}
+@media (hover:none){.arrow{opacity:1}}
+.bar{height:2px;background:var(--steel)}.bar i{display:block;height:100%;width:0;background:var(--amber)}
+.dots{display:flex;gap:6px;margin-top:12px}
+.dots button{width:26px;height:3px;background:var(--steel-light);border:0;cursor:pointer;transition:all .3s}
+.dots button.on{width:42px;background:var(--amber)}
+.counter{position:absolute;right:10px;bottom:10px;z-index:4;font-family:'Space Mono',monospace;font-size:.7rem;background:rgba(13,13,13,.75);padding:2px 8px;border:1px solid var(--steel-light)}
+
+/* Memory tiles */
+.memory{background:var(--bg-card);border:1px solid var(--steel-light);overflow:hidden;cursor:zoom-in;transition:border-color .25s,transform .25s}
+.memory:hover{border-color:var(--amber);transform:translateY(-4px)}
+.memory img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+.masonry{columns:1;column-gap:16px}
+@media(min-width:640px){.masonry{columns:2}}@media(min-width:1024px){.masonry{columns:3}}
+.masonry .memory{break-inside:avoid;margin-bottom:16px}
+.masonry .memory img{aspect-ratio:auto}
+
+/* Lightbox */
+#lb{position:fixed;inset:0;background:rgba(0,0,0,.94);z-index:100;display:none;align-items:center;justify-content:center;padding:16px}
+#lb.open{display:flex}
+#lb img{max-width:100%;max-height:82vh;object-fit:contain;border:1px solid var(--steel-light)}
+#lb .x{position:absolute;top:calc(env(safe-area-inset-top,0px) + 14px);right:16px;color:#fff;background:none;border:0;cursor:pointer}
+#lb .cap{position:absolute;bottom:calc(env(safe-area-inset-bottom,0px) + 16px);left:0;right:0;text-align:center;font-size:.85rem;color:var(--muted);padding:0 16px}
+:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.track{transition:none}}
+</style>
+</head>
+<body class="min-h-screen">
+
+<nav class="site-nav fixed w-full z-50" style="top:env(safe-area-inset-top,0px)">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="images/umrt_logo.png" alt="URRT Logo" class="h-10 w-10 rounded-full">
+        <img src="images/urrt_text.png" alt="URRT" class="h-7 md:h-9">
+      </a>
+      <div class="hidden md:flex items-baseline gap-6">
+        <a href="projects.html" class="nav-link py-2">Projects</a>
+        <a href="Advisors.html" class="nav-link py-2">Advisors</a>
+        <a href="member.html" class="nav-link py-2">Team</a>
+         <a href="gallery.html"    class="nav-link py-2">Gallery</a>
+        <a href="gears.html" class="nav-link py-2">Gears</a>
+        <a href="gallery.html" class="nav-link py-2 active">Gallery</a>
+        <a href="video.html" class="nav-link py-2">Qualification Video</a>
+        <a href="Assets.html" class="nav-link py-2">Assets</a>
+        <a href="contact.html" class="nav-link py-2">Contact</a>
+        <a href="Join.html" class="nav-link py-2">Join Us</a>
+        <a href="sponsor.html" class="btn-primary text-sm py-2 px-5">Sponsor</a>
+      </div>
+      <button id="menu-btn" class="md:hidden text-white" aria-label="Menu"><i data-feather="menu" class="w-6 h-6"></i></button>
+    </div>
+  </div>
+  <div id="mobile-menu" class="md:hidden hidden" style="background:var(--bg-mid);border-top:1px solid var(--steel-light)">
+    <div class="px-4 py-3 space-y-2">
+      <a href="projects.html" class="block nav-link py-2">Projects</a>
+      <a href="Advisors.html" class="block nav-link py-2">Advisors</a>
+      <a href="member.html" class="block nav-link py-2">Team</a>
+      <a href="gears.html" class="block nav-link py-2">Gears</a>
+      <a href="gallery.html" class="block nav-link py-2 active">Gallery</a>
+      <a href="video.html" class="block nav-link py-2">Qualification Video</a>
+      <a href="Assets.html" class="block nav-link py-2">Assets</a>
+      <a href="contact.html" class="block nav-link py-2">Contact</a>
+      <a href="Join.html" class="block nav-link py-2">Join Us</a>
+      <a href="sponsor.html" class="block nav-link py-2">Become Sponsor</a>
+    </div>
+  </div>
+</nav>
+
+<header class="pt-32 pb-14 px-4 text-center grid-bg relative" style="background-color:var(--bg-mid)">
+  <div class="absolute top-0 left-0 right-0 h-1 hazard opacity-50"></div>
+  <div class="section-label justify-center mb-4">Gallery</div>
+  <h1 class="text-6xl md:text-8xl gradient-text">OUR MEMORIES</h1>
+  <p class="mt-4 max-w-2xl mx-auto" style="color:var(--muted)">Events, field tests and everyday moments from the UIU Rescue Rover Team.</p>
+</header>
+
+<!-- EVENTS -->
+<section class="py-16 px-4 sm:px-6 lg:px-8" style="background-color:var(--bg-deep)">
+  <div class="max-w-7xl mx-auto">
+    <h2 class="text-4xl md:text-5xl mb-10">EVENTS</h2>
+    <div id="events" class="grid md:grid-cols-2 gap-8"></div>
+  </div>
+</section>
+
+<!-- MEMORIES -->
+<section class="py-16 px-4 sm:px-6 lg:px-8" style="background-color:var(--bg-mid)">
+  <div class="max-w-7xl mx-auto">
+    <h2 class="text-4xl md:text-5xl mb-2">MEMORIES</h2>
+    <div id="memories" class="masonry"></div>
+  </div>
+</section>
+
+<footer class="py-8 px-4" style="background:var(--bg-deep);border-top:1px solid var(--steel-light)">
+  <div class="hazard h-1 mb-8 opacity-60"></div>
+  <p class="mono text-xs text-center" style="color:var(--muted)">&copy; 2026 URRT – UIU Rescue Rover Team. All rights reserved.</p>
+</footer>
+
+<!-- Lightbox -->
+<div id="lb" role="dialog" aria-modal="true" aria-label="Image viewer">
+  <button class="x" aria-label="Close"><i data-feather="x" class="w-8 h-8"></i></button>
+  <img alt="">
+  <div class="cap"></div>
+</div>
+
+<script>
+/* =====================================================
+   EDIT HERE — add your events and memories.
+   Put images in images/gallery/ (or change the paths).
+   Each event: use 5–6 images for the slider.
+   ===================================================== */
+const EVENTS = [
+ 
+
+{
+  title: "Meeting with Nix-Lab, Mexico",
+  date: "November 2026",
+  desc: "Innovation grows stronger through collaboration. The UIU Rescue Rover Team (URRT) was delighted to meet Nix-Lab, a robotics community from Ciudad Victoria, Mexico. We had the opportunity to showcase our rescue rover, exchange ideas, and learn from each other's experiences in robotics and engineering. We are thankful to Nix-Lab for the inspiring discussion and warm support, and we look forward to meeting again on the global robotics stage.",
+  images: ["images/lm.jpg"]
+},
+
+
+  {
+     title: "Bear Summit & National Semiconductor Symposium 2026",
+    date: "2026",
+    place: "Bangladesh",
+    desc: "The UIU Rescue Rover Team presented our rescue rover, AEGIS, to the Prime Minister of Bangladesh at the Bear Summit and National Semiconductor Symposium 2026. We showcased the rover to a fantastic crowd of students and were inspired to see so many young minds passionate about robotics. Special thanks to our teachers, mentors, and United International University for their continuous support, and to the UIU Photography Club for capturing these moments.",
+    images: ["images/M1.jpeg","images/M2.jpeg","images/M3.jpeg","images/M5.jpg","images/M4.jpeg"]
+  },
+
+
+   {
+    title: "IEEE RAS Seminar",
+    date: "January 2026",
+    place: "UIU Campus",
+    desc: "The UIU Rescue Rover Team (URRT) was honoured to be invited to a seminar jointly organised by the IEEE Robotics and Automation Society (RAS) Bangladesh Chapter, Uro Bangladesh, IEEE UIU Student Branch, and United International University. We shared our RoboCup 2026 journey in South Korea, highlighting the challenges, innovations, and experiences that shaped our participation on the international stage. We were deeply honoured to share the stage with Professor Dr. Shaikh Anowarul Fattah (Professor, Department of EEE, BUET; Chair, IEEE SPS Bangladesh Chapter) and Professor Dr. Celia Shahnaz (Professor, Department of EEE, BUET; Chair, IEEE RAS Bangladesh Chapter), and learned a great deal from their insights on research, innovation, and the future of robotics. A special highlight was meeting Team MIST Mavirov, the 2026 MATE ROV Competition World Champions, and exchanging ideas and experiences with them.",
+    images: ["images/i4.jpeg","images/i5.jpeg","images/i0.jpeg","images/i2.jpeg","images/i1.jpeg"]
+  },
+
+
+{
+  title: "Legend International School Visit to CAIR",
+  date: "November 2026",
+  place: "UIU Campus",
+  desc: "The Centre for Artificial Intelligence and Robotics (CAIR) at United International University was delighted to welcome over 40 enthusiastic students, together with their teachers and Principal, from Legend International School for a day of discovery. The visit opened in our auditorium, where Prof. Dr. Hasan Sarwar inaugurated the event with an insightful address, followed by a brief presentation introducing the students to CAIR and its teams, and offering a glimpse of the research, engineering, and technology initiatives carried out under the centre. The students then toured our project teams one by one: the UIU Rescue Rover Team (URRT), developing robotic solutions for disaster response and hazardous environments; the UIU Mars Rover Team (UMRT), advancing the frontiers of planetary exploration; UIU Mariner, investigating the potential of marine robotics; and the UIU Aerial Team (UART), taking innovation to the skies. Watching the students engage with the rovers was truly inspiring, as their curiosity and energy showed how science, engineering, and robotics converge to address real-world challenges. We extend our sincere thanks to Legend International School for visiting CAIR and giving us the chance to share our passion for innovation with the next generation of scientists and engineers.",
+  images: ["images/f1.jpg","images/f2.jpg","images/f3.jpg","images/f4.jpg","images/f5.jpg","images/f6.jpg"]
+},
+
+
+
+];
+
+const MEMORIES = [
+  { src: "images/pq.jpg" },
+  { src: "images/oq.jpg" },
+  { src: "images/re2.jpg"}
+];
+/* ===================================================== */
+
+const INTERVAL = 3000;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---- Lightbox ---- */
+const lb = document.getElementById('lb'), lbImg = lb.querySelector('img'), lbCap = lb.querySelector('.cap');
+function openLb(src, cap){ lbImg.src = src; lbCap.textContent = cap || ''; lb.classList.add('open'); }
+function closeLb(){ lb.classList.remove('open'); lbImg.src = ''; }
+lb.addEventListener('click', e => { if (e.target !== lbImg) closeLb(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLb(); });
+
+/* ---- Events ---- */
+const eventsEl = document.getElementById('events');
+EVENTS.forEach(ev => {
+  const card = document.createElement('article');
+  card.className = 'event';
+  card.innerHTML = `
+    <div class="slider" tabindex="0" aria-label="${esc(ev.title)} photos">
+      <div class="track">${ev.images.map((s,i) => `<img src="${esc(s)}" alt="${esc(ev.title)} photo ${i+1}" loading="${i?'lazy':'eager'}">`).join('')}</div>
+      <div class="shade"></div>
+      <button class="arrow prev" aria-label="Previous photo"><i data-feather="chevron-left" class="w-5 h-5"></i></button>
+      <button class="arrow next" aria-label="Next photo"><i data-feather="chevron-right" class="w-5 h-5"></i></button>
+      <div class="counter"></div>
+    </div>
+    <div class="bar"><i></i></div>
+    <div class="p-6">
+      <div class="mono text-xs mb-2" style="color:var(--amber)">${esc(ev.date)} &nbsp;|&nbsp; ${esc(ev.place)}</div>
+      <h3 class="text-3xl mb-2">${esc(ev.title)}</h3>
+      <p class="text-sm leading-relaxed" style="color:var(--muted)">${esc(ev.desc)}</p>
+      <div class="dots">${ev.images.map((_,i) => `<button aria-label="Show photo ${i+1}"></button>`).join('')}</div>
+    </div>`;
+  eventsEl.appendChild(card);
+  initSlider(card, ev);
+});
+
+function initSlider(card, ev){
+  const n = ev.images.length;
+  const track = card.querySelector('.track'), bar = card.querySelector('.bar i');
+  const dots = card.querySelectorAll('.dots button'), counter = card.querySelector('.counter');
+  const slider = card.querySelector('.slider');
+  let cur = 0, timer = null;
+
+  function go(i){
+    cur = (i + n) % n;
+    track.style.transform = `translateX(-${cur*100}%)`;
+    dots.forEach((d,k) => d.classList.toggle('on', k === cur));
+    counter.textContent = `${cur+1} / ${n}`;
+    bar.style.transition = 'none'; bar.style.width = '0';
+    if (timer){ requestAnimationFrame(() => requestAnimationFrame(() => { bar.style.transition = `width ${INTERVAL}ms linear`; bar.style.width = '100%'; })); }
+  }
+  function start(){ if (reduceMotion || timer) return; timer = setInterval(() => go(cur+1), INTERVAL); go(cur); }
+  function stop(){ clearInterval(timer); timer = null; bar.style.transition = 'none'; bar.style.width = '0'; }
+
+  card.querySelector('.prev').addEventListener('click', e => { e.stopPropagation(); go(cur-1); if (timer){ stop(); start(); } });
+  card.querySelector('.next').addEventListener('click', e => { e.stopPropagation(); go(cur+1); if (timer){ stop(); start(); } });
+  dots.forEach((d,k) => d.addEventListener('click', () => { go(k); if (timer){ stop(); start(); } }));
+  slider.addEventListener('click', () => openLb(ev.images[cur], `${ev.title} — ${cur+1}/${n}`));
+  slider.addEventListener('keydown', e => { if (e.key === 'ArrowRight') go(cur+1); if (e.key === 'ArrowLeft') go(cur-1); if (e.key === 'Enter') openLb(ev.images[cur], ev.title); });
+  slider.addEventListener('mouseenter', stop);
+  slider.addEventListener('mouseleave', () => { if (visible) start(); });
+
+  // only autoplay while on screen
+  let visible = false;
+  new IntersectionObserver(([en]) => { visible = en.isIntersecting; visible ? start() : stop(); }, { threshold: .3 }).observe(card);
+  go(0);
+}
+
+/* ---- Memories ---- */
+const memEl = document.getElementById('memories');
+MEMORIES.forEach(m => {
+  const f = document.createElement('figure');
+  f.className = 'memory';
+  f.innerHTML = `<img src="${esc(m.src)}" alt="${esc(m.caption || 'Team memory')}" loading="lazy">` +
+    (m.caption ? `<figcaption class="px-4 py-3 text-sm" style="color:var(--muted)">${esc(m.caption)}</figcaption>` : '');
+  f.addEventListener('click', () => openLb(m.src, m.caption));
+  memEl.appendChild(f);
+});
+
+/* ---- Nav + icons ---- */
+document.getElementById('menu-btn').addEventListener('click', () => document.getElementById('mobile-menu').classList.toggle('hidden'));
+feather.replace();
+</script>
+</body>
+</html>
